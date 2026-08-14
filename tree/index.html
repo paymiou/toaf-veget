@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>蔬食小樹日記 - 雲端養成寫實版</title>
+    <title>蔬食小樹日記 - 多元森林繪本版</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -214,6 +214,8 @@
         { name: "溫馨刺蝟", icon: "🦔", requiredTrees: 12 }
     ];
 
+    const TREE_NAMES = ["🌳 經典寫實樹", "🌲 鋸齒冷杉樹", "☁️ 蓬鬆雲朵樹", "🔺 三角幾何樹", "🟢 圓球葉脈樹"];
+
     const canvas = document.getElementById('treeCanvas');
     const ctx = canvas.getContext('2d');
     const logicalWidth = 400;
@@ -362,122 +364,242 @@
         });
     }
 
-    // 🌟 核心升級：繪製寫實茂密的蓬鬆樹冠葉團
-    function drawFoliageCluster(x, y, radius) {
-        if (radius <= 1) return;
-        
-        // 5 種自然的漸層綠色 (暗部陰影 -> 中間樹葉 -> 亮部嫩葉)
-        const leafColors = [
-            'rgba(27, 94, 32, 0.85)',   // 深綠陰影
-            'rgba(46, 125, 50, 0.85)',  // 森林綠
-            'rgba(56, 142, 60, 0.80)',  // 茂盛綠
-            'rgba(76, 175, 80, 0.80)',  // 亮綠
-            'rgba(129, 199, 132, 0.75)' // 嫩葉高光
-        ];
+    // ----------------------------------------------------
+    // 🎨 五大多元繪本風格大樹演算法
+    // ----------------------------------------------------
 
+    // 1. 經典寫實分枝樹
+    function drawClassicFoliage(x, y, radius) {
+        if (radius <= 1) return;
+        const colors = ['rgba(27, 94, 32, 0.85)', 'rgba(46, 125, 50, 0.85)', 'rgba(76, 175, 80, 0.80)', 'rgba(129, 199, 132, 0.75)'];
         ctx.save();
         ctx.translate(x, y);
-
-        // 每個分枝末端繪製多個重疊的幾何圓形，構成蓬鬆自然的樹冠
-        const subLeafCount = Math.floor(6 + seededRandom() * 6);
-        for (let i = 0; i < subLeafCount; i++) {
+        for (let i = 0; i < 6; i++) {
             const angle = seededRandom() * Math.PI * 2;
             const dist = seededRandom() * radius * 0.6;
-            const lx = Math.cos(angle) * dist;
-            const ly = Math.sin(angle) * dist;
-            const subRadius = radius * (0.5 + seededRandom() * 0.5);
-
             ctx.beginPath();
-            ctx.fillStyle = leafColors[Math.floor(seededRandom() * leafColors.length)];
-            ctx.arc(lx, ly, subRadius, 0, Math.PI * 2);
+            ctx.fillStyle = colors[Math.floor(seededRandom() * colors.length)];
+            ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, radius * 0.6, 0, Math.PI * 2);
             ctx.fill();
         }
         ctx.restore();
     }
 
-    // 🌟 核心升級：帶有自然弧度（貝茲曲線）的寫實樹枝演算法
-    function drawTree(startX, startY, len, angle, branchWidth, depth, growthProgress) {
+    function drawClassicTree(startX, startY, len, angle, branchWidth, depth, growth) {
         if (depth === 0 || len <= 2) return;
-
         ctx.save();
         ctx.translate(startX, startY);
         ctx.rotate(angle * Math.PI / 180);
-
-        // 寫實樹枝：採用自然彎曲曲線 (quadraticCurveTo)
-        const curveOffset = (seededRandom() - 0.5) * (len * 0.35); // 產生微小的有機彎曲幅度
-        
         ctx.beginPath();
-        ctx.strokeStyle = depth > 3 ? '#3e2723' : '#4e342e'; // 樹幹色與細枝色漸變
+        ctx.strokeStyle = depth > 3 ? '#3e2723' : '#4e342e';
         ctx.lineWidth = branchWidth;
         ctx.lineCap = 'round';
-
         ctx.moveTo(0, 0);
-        ctx.quadraticCurveTo(curveOffset, -len * 0.5, 0, -len);
+        ctx.quadraticCurveTo((seededRandom() - 0.5) * len * 0.3, -len * 0.5, 0, -len);
         ctx.stroke();
 
-        // 在樹枝中後段與末梢繪製茂盛葉團
-        if (depth <= 4 && growthProgress > 2) {
-            // 隨成長進度放大樹冠尺寸
-            const maxFoliageSize = Math.min(22, 6 + (growthProgress / MAX_TREE_CLICKS) * 20);
-            drawFoliageCluster(0, -len, maxFoliageSize * (depth / 4));
+        if (depth <= 4 && growth > 2) {
+            drawClassicFoliage(0, -len, Math.min(22, 6 + (growth / MAX_TREE_CLICKS) * 20) * (depth / 4));
         }
-
-        const spreadAngleLeft = 18 + seededRandom() * 18;
-        const spreadAngleRight = 18 + seededRandom() * 18;
-        const childLenLeft = len * (0.68 + seededRandom() * 0.12);
-        const childLenRight = len * (0.68 + seededRandom() * 0.12);
-
         if (depth > 1) {
-            drawTree(0, -len, childLenLeft, spreadAngleLeft, branchWidth * 0.68, depth - 1, growthProgress);
-            drawTree(0, -len, childLenRight, -spreadAngleRight, branchWidth * 0.68, depth - 1, growthProgress);
+            drawClassicTree(0, -len, len * 0.7, 20 + seededRandom() * 15, branchWidth * 0.7, depth - 1, growth);
+            drawClassicTree(0, -len, len * 0.7, -20 - seededRandom() * 15, branchWidth * 0.7, depth - 1, growth);
         }
-
         ctx.restore();
     }
 
-    function render() {
+    // 2. 🌲 鋸齒冷杉/松樹
+    function drawPineTree(x, y, growth) {
+        const height = Math.min(180, 40 + growth * 9.5);
+        const width = Math.min(130, 20 + growth * 7.5);
+
+        // 樹幹
+        ctx.fillStyle = '#4e342e';
+        ctx.beginPath();
+        ctx.rect(x - 8, y - height * 0.25, 16, height * 0.25);
+        ctx.fill();
+
+        // 3-5 層鋸齒鋸形樹冠
+        const layers = Math.min(5, Math.floor(2 + growth / 3));
+        const layerHeight = (height * 0.85) / layers;
+
+        for (let i = 0; i < layers; i++) {
+            const layerY = y - height * 0.2 - (i * layerHeight * 0.75);
+            const layerW = width * (1 - i * 0.18);
+            
+            ctx.fillStyle = i % 2 === 0 ? '#2e7d32' : '#388e3c';
+            ctx.beginPath();
+            ctx.moveTo(x, layerY - layerHeight);
+            ctx.lineTo(x - layerW / 2, layerY);
+            ctx.lineTo(x - layerW / 4, layerY - layerHeight * 0.2);
+            ctx.lineTo(x - layerW * 0.6, layerY + layerHeight * 0.2);
+            ctx.lineTo(x + layerW * 0.6, layerY + layerHeight * 0.2);
+            ctx.lineTo(x + layerW / 4, layerY - layerHeight * 0.2);
+            ctx.lineTo(x + layerW / 2, layerY);
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+
+    // 3. ☁️ 蓬鬆雲朵花樹
+    function drawCloudTree(x, y, growth) {
+        const treeH = Math.min(170, 40 + growth * 9);
+        const radius = Math.min(75, 15 + growth * 4);
+
+        // 主樹幹
+        ctx.strokeStyle = '#5d4037';
+        ctx.lineWidth = Math.min(14, 3 + growth * 0.7);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.quadraticCurveTo(x - 10, y - treeH * 0.5, x, y - treeH * 0.6);
+        ctx.stroke();
+
+        if (growth <= 2) return;
+
+        // 雲朵圓弧聚合物
+        const cloudY = y - treeH * 0.65;
+        const bumps = [
+            { dx: 0, dy: -radius * 0.4, r: radius * 0.6, c: '#81c784' },
+            { dx: -radius * 0.45, dy: -radius * 0.1, r: radius * 0.5, c: '#4caf50' },
+            { dx: radius * 0.45, dy: -radius * 0.1, r: radius * 0.5, c: '#43a047' },
+            { dx: -radius * 0.25, dy: radius * 0.25, r: radius * 0.45, c: '#388e3c' },
+            { dx: radius * 0.25, dy: radius * 0.25, r: radius * 0.45, c: '#2e7d32' }
+        ];
+
+        bumps.forEach(b => {
+            ctx.fillStyle = b.c;
+            ctx.beginPath();
+            ctx.arc(x + b.dx, cloudY + b.dy, b.r, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+
+    // 4. 🔺 三角幾何傘樹
+    function drawTriangleTree(x, y, growth) {
+        const treeH = Math.min(175, 45 + growth * 9);
+        const triW = Math.min(140, 30 + growth * 7.5);
+
+        // Y 型樹幹
+        ctx.strokeStyle = '#4e342e';
+        ctx.lineWidth = Math.min(12, 3 + growth * 0.6);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y - treeH * 0.45);
+        ctx.lineTo(x - triW * 0.25, y - treeH * 0.7);
+        ctx.moveTo(x, y - treeH * 0.45);
+        ctx.lineTo(x + triW * 0.25, y - treeH * 0.7);
+        ctx.stroke();
+
+        if (growth <= 2) return;
+
+        // 正三角幾何樹冠
+        const topY = y - treeH;
+        ctx.fillStyle = '#2e7d32';
+        ctx.beginPath();
+        ctx.moveTo(x, topY);
+        ctx.lineTo(x - triW / 2, y - treeH * 0.35);
+        ctx.quadraticCurveTo(x, y - treeH * 0.28, x + triW / 2, y - treeH * 0.35);
+        ctx.closePath();
+        ctx.fill();
+
+        // 亮色裝飾內層
+        ctx.fillStyle = '#66bb6a';
+        ctx.beginPath();
+        ctx.moveTo(x, topY + treeH * 0.1);
+        ctx.lineTo(x - triW * 0.35, y - treeH * 0.38);
+        ctx.lineTo(x + triW * 0.35, y - treeH * 0.38);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    // 5. 🟢 圓球葉脈樹
+    function drawSphereTree(x, y, growth) {
+        const treeH = Math.min(180, 45 + growth * 9);
+        const sphereR = Math.min(65, 12 + growth * 3.8);
+        const centerY = y - treeH + sphereR;
+
+        // 直樹幹與魚骨斜枝
+        ctx.strokeStyle = '#6d4c41';
+        ctx.lineWidth = Math.min(10, 3 + growth * 0.5);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y - treeH * 0.95);
+        ctx.stroke();
+
+        if (growth > 2) {
+            // 斜向分支
+            ctx.lineWidth = 3;
+            for (let i = 1; i <= 3; i++) {
+                const branchY = y - treeH * 0.3 - (i * sphereR * 0.35);
+                ctx.beginPath();
+                ctx.moveTo(x, branchY);
+                ctx.lineTo(x - sphereR * 0.5, branchY - sphereR * 0.25);
+                ctx.moveTo(x, branchY);
+                ctx.lineTo(x + sphereR * 0.5, branchY - sphereR * 0.25);
+                ctx.stroke();
+            }
+
+            // 外圍圓形樹冠
+            ctx.fillStyle = 'rgba(76, 175, 80, 0.75)';
+            ctx.beginPath();
+            ctx.arc(x, centerY, sphereR, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 樹葉飾點
+            ctx.fillStyle = '#1b5e20';
+            for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
+                const lx = x + Math.cos(angle) * sphereR * 0.65;
+                const ly = centerY + Math.sin(angle) * sphereR * 0.65;
+                ctx.beginPath();
+                ctx.arc(lx, ly, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+
+    // 主繪製派發器
+    function renderTreeScene(growth) {
         ctx.clearRect(0, 0, logicalWidth, logicalHeight);
         currentPRNGState = treeSeed;
 
-        // 🌟 地面柔和陰影（讓樹看起來更沉穩立體）
-        const shadowRadius = Math.min(50, 10 + currentGrowth * 2.8);
+        // 地面陰影
+        const shadowR = Math.min(50, 10 + growth * 2.8);
         ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
         ctx.beginPath();
-        ctx.ellipse(200, 318, shadowRadius, shadowRadius * 0.25, 0, 0, Math.PI * 2);
+        ctx.ellipse(200, 318, shadowR, shadowR * 0.25, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        if (currentGrowth < 1) {
-            // 階段 0：土地上的發芽種子
+        if (growth < 1) {
+            // 種子階段
             ctx.fillStyle = '#6d4c41';
             ctx.beginPath();
             ctx.ellipse(200, 315, 8, 5, 0, 0, Math.PI * 2);
             ctx.fill();
-        } else if (currentGrowth < 3) {
-            // 階段 1-2：細緻小嫩芽
-            const sproutHeight = currentGrowth * 14;
-            ctx.beginPath();
-            ctx.strokeStyle = '#689f38';
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
-            ctx.moveTo(200, 318);
-            ctx.quadraticCurveTo(196, 318 - sproutHeight * 0.5, 200, 318 - sproutHeight);
-            ctx.stroke();
-
-            ctx.fillStyle = '#8bc34a';
-            ctx.beginPath();
-            ctx.ellipse(193, 318 - sproutHeight, 7, 4, -Math.PI / 4, 0, Math.PI * 2);
-            ctx.ellipse(207, 318 - sproutHeight, 7, 4, Math.PI / 4, 0, Math.PI * 2);
-            ctx.fill();
         } else {
-            // 階段 3-15：茂盛大樹遞迴繪製
-            const maxDepth = Math.min(10, Math.floor(3 + currentGrowth / 1.7));
-            const trunkLength = Math.min(85, 25 + currentGrowth * 4.2);
-            const trunkWidth = Math.min(16, 3 + currentGrowth * 0.85);
-
-            drawTree(200, 318, trunkLength, 0, trunkWidth, maxDepth, currentGrowth);
+            // 依據 treeSeed % 5 繪製 5 種不同手繪風格大樹
+            const treeType = treeSeed % 5;
+            switch(treeType) {
+                case 0:
+                    drawClassicTree(200, 318, Math.min(85, 25 + growth * 4.2), 0, Math.min(16, 3 + growth * 0.85), Math.min(10, Math.floor(3 + growth / 1.7)), growth);
+                    break;
+                case 1:
+                    drawPineTree(200, 318, growth);
+                    break;
+                case 2:
+                    drawCloudTree(200, 318, growth);
+                    break;
+                case 3:
+                    drawTriangleTree(200, 318, growth);
+                    break;
+                case 4:
+                    drawSphereTree(200, 318, growth);
+                    break;
+            }
         }
 
-        // 蔬食飄落特效
+        // 飄落蔬食粒子
         if (particles.length > 0) {
             particles.forEach(p => {
                 ctx.font = `${p.size}px sans-serif`;
@@ -508,7 +630,7 @@
             }
         }
 
-        render();
+        renderTreeScene(currentGrowth);
 
         if (isGrowing || hasParticles) {
             requestAnimationFrame(animate);
@@ -543,22 +665,24 @@
         const actionBtn = document.getElementById('actionBtn');
         const messageEl = document.getElementById('message');
 
+        const currentTreeType = TREE_NAMES[treeSeed % 5];
+
         if (currentTreeClicks >= MAX_TREE_CLICKS) {
             actionBtn.disabled = false;
             actionBtn.classList.add('btn-harvest');
             actionBtn.textContent = '🎉 大樹完熟！點擊收穫並種植新樹';
-            messageEl.textContent = '🌟 太棒了！這棵小樹因您的蔬食行動長成茂盛大樹囉！';
+            messageEl.textContent = `🌟 太棒了！您的蔬食行動養成了完熟的【${currentTreeType}】囉！`;
         } else if (todayClicks >= MAX_DAILY_CLICKS) {
             actionBtn.disabled = true;
             actionBtn.classList.remove('btn-harvest');
             actionBtn.textContent = '🥗 今天蔬食次數已達上限';
-            messageEl.textContent = '👏 今天已完成 3 次蔬食紀錄！小樹正在茁壯，明天繼續加油！';
+            messageEl.textContent = `👏 今天已完成 3 次蔬食紀錄！【${currentTreeType}】正在茁壯，明天繼續加油！`;
         } else {
             actionBtn.disabled = false;
             actionBtn.classList.remove('btn-harvest');
             const remaining = MAX_DAILY_CLICKS - todayClicks;
             actionBtn.textContent = `🥗 我今天吃蔬食 (剩 ${remaining} 次)`;
-            messageEl.textContent = `🌱 每吃一餐蔬食點一次，幫助小樹成長 (每天限 ${MAX_DAILY_CLICKS} 次)`;
+            messageEl.textContent = `🌱 每吃一餐蔬食點一次，照顧【${currentTreeType}】(每天限 ${MAX_DAILY_CLICKS} 次)`;
         }
 
         renderGallery();
@@ -603,7 +727,7 @@
             updateUI();
             if (!isAnimating) animate();
 
-            alert('🌳 恭喜收穫 1 棵成熟茂盛大樹！已寫入雲端圖鑑，並準備好種植下一顆新種子囉！');
+            alert('🌳 恭喜收穫 1 棵成熟大樹！已寫入雲端圖鑑，並隨機抽取種植下一顆新樹種囉！');
             return;
         }
 
@@ -623,7 +747,7 @@
     checkUserCredentials();
     checkDailyReset();
     updateUI();
-    render();
+    renderTreeScene(currentGrowth);
 </script>
 
 </body>
