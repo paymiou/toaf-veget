@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>蔬食小樹日記 - 綠色養成圖鑑</title>
+    <title>吃蔬種樹-小樹苗養成記</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             background-color: #f0f7f2;
@@ -28,7 +26,7 @@
             text-align: center;
         }
         .header {
-            padding: 20px 20px 15px;
+            padding: 18px 20px 12px;
             background: #e8f5e9;
             border-bottom: 1px solid #c8e6c9;
         }
@@ -37,10 +35,27 @@
             font-size: 22px;
             color: #2e7d32;
         }
+        .user-bar {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #4a7050;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.6);
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+        .sync-btn {
+            color: #2e7d32;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: bold;
+        }
         .stats {
             display: flex;
             justify-content: space-around;
-            margin-top: 15px;
+            margin-top: 12px;
             color: #388e3c;
             font-size: 13px;
         }
@@ -50,21 +65,16 @@
             color: #1b5e20;
             margin-top: 2px;
         }
-        /* Canvas 畫布區 */
         .canvas-container {
             position: relative;
             background: linear-gradient(to bottom, #e8f5e9 0%, #ffffff 80%, #d7ccc8 80%, #a1887f 100%);
-            height: 360px;
+            height: 340px;
             display: flex;
             justify-content: center;
             align-items: flex-end;
         }
-        canvas {
-            display: block;
-        }
-        .controls {
-            padding: 20px;
-        }
+        canvas { display: block; }
+        .controls { padding: 20px; }
         .btn-action {
             background: linear-gradient(135deg, #66bb6a, #43a047);
             color: white;
@@ -104,8 +114,6 @@
             color: #666;
             min-height: 18px;
         }
-
-        /* 圖鑑區塊 */
         .gallery-section {
             border-top: 1px dashed #e0e0e0;
             padding: 15px 20px 20px;
@@ -132,7 +140,6 @@
             padding: 8px 4px;
             font-size: 11px;
             color: #757575;
-            transition: all 0.3s ease;
         }
         .animal-card.unlocked {
             border-color: #81c784;
@@ -151,13 +158,10 @@
             filter: grayscale(0%);
             opacity: 1;
         }
-        .reset-link {
-            display: inline-block;
-            margin-top: 12px;
-            color: #b0bec5;
+        .sync-status {
             font-size: 11px;
-            text-decoration: underline;
-            cursor: pointer;
+            color: #888;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -166,6 +170,10 @@
 <div class="app-card">
     <div class="header">
         <h1>🥗 蔬食養成日記</h1>
+        <div class="user-bar">
+            <span>👤 玩家：<strong id="displayNickname">尚未設定</strong></span>
+            <span class="sync-btn" onclick="loadCloudDataPrompt()">☁️ 讀取舊雲端進度</span>
+        </div>
         <div class="stats">
             <div class="stat-box">今日蔬食<strong id="todayVeg">0 / 3 次</strong></div>
             <div class="stat-box">小樹進度<strong id="progress">0 / 15</strong></div>
@@ -180,27 +188,25 @@
     <div class="controls">
         <button id="actionBtn" class="btn-action" onclick="handleAction()">🥗 我今天吃蔬食</button>
         <div id="message" class="message"></div>
+        <div id="syncStatus" class="sync-status"></div>
     </div>
 
-    <!-- 🌳 動物圖鑑區 -->
     <div class="gallery-section">
         <div class="gallery-title">
             <span>🐾 森林動物圖鑑</span>
             <span id="animalProgress" style="font-size:12px; font-weight:normal; color:#666;">(0/4 解鎖)</span>
         </div>
-        <div class="animals-grid" id="animalsGrid">
-            <!-- 動物卡片會由 JavaScript 動態生成 -->
-        </div>
-        <span class="reset-link" onclick="resetAllData()">重置所有數據 (重新開始)</span>
+        <div class="animals-grid" id="animalsGrid"></div>
     </div>
 </div>
 
 <script>
-    const MAX_DAILY_CLICKS = 3;  // 一天最多 3 次
-    const MAX_TREE_CLICKS = 15;  // 15 次滿級成大樹
-    const TREES_PER_ANIMAL = 3;  // 每 3 棵大樹解鎖 1 隻動物
+    // 🔗 請將您部署 Apps Script 獲得的 URL 貼在下面：
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_XXXXXXXXXXXX/exec";
 
-    // 定義可解鎖的動物圖鑑
+    const MAX_DAILY_CLICKS = 3;
+    const MAX_TREE_CLICKS = 15;
+
     const ANIMAL_LIST = [
         { name: "萌萌兔", icon: "🐰", requiredTrees: 3 },
         { name: "靈巧松鼠", icon: "🐿️", requiredTrees: 6 },
@@ -208,11 +214,10 @@
         { name: "溫馨刺蝟", icon: "🦔", requiredTrees: 12 }
     ];
 
-    // Canvas 相關設定
     const canvas = document.getElementById('treeCanvas');
     const ctx = canvas.getContext('2d');
     const logicalWidth = 400;
-    const logicalHeight = 360;
+    const logicalHeight = 340;
     const dpr = window.devicePixelRatio || 1;
 
     canvas.style.width = '100%';
@@ -222,21 +227,20 @@
     canvas.height = logicalHeight * dpr;
     ctx.scale(dpr, dpr);
 
-    // 狀態變數 (從 LocalStorage 讀取)
+    let nickname = localStorage.getItem('veg_nickname') || '';
+    let pin = localStorage.getItem('veg_pin') || '';
     let todayClicks = parseInt(localStorage.getItem('veg_todayClicks')) || 0;
     let lastDate = localStorage.getItem('veg_lastDate') || '';
     let currentTreeClicks = parseInt(localStorage.getItem('veg_currentTreeClicks')) || 0;
     let totalTreesCollected = parseInt(localStorage.getItem('veg_treesCollected')) || 0;
     let treeSeed = parseInt(localStorage.getItem('veg_treeSeed')) || Math.floor(Math.random() * 100000);
 
-    // 動畫補間變數
     let currentGrowth = currentTreeClicks;
     let targetGrowth = currentTreeClicks;
     let isAnimating = false;
     let particles = [];
-
-    // PRNG 隨機生成樹形
     let currentPRNGState = treeSeed;
+
     function seededRandom() {
         currentPRNGState = (currentPRNGState * 9301 + 49297) % 233280;
         return currentPRNGState / 233280;
@@ -247,17 +251,27 @@
         return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     }
 
-    // 檢查日期是否換日，換日則重置今日點擊次數
+    function checkUserCredentials() {
+        if (!nickname || !pin) {
+            nickname = prompt('歡迎來到蔬食日記！請輸入您的「暱稱」：') || `蔬食愛好者${Math.floor(Math.random()*1000)}`;
+            pin = prompt('請設定您的「4 位數暗號」（用於換手機時撈回進度）：') || '1234';
+            
+            localStorage.setItem('veg_nickname', nickname);
+            localStorage.setItem('veg_pin', pin);
+        }
+        document.getElementById('displayNickname').textContent = nickname;
+    }
+
     function checkDailyReset() {
         const today = getTodayString();
         if (lastDate !== today) {
             todayClicks = 0;
             lastDate = today;
-            saveData();
+            saveLocalData();
         }
     }
 
-    function saveData() {
+    function saveLocalData() {
         localStorage.setItem('veg_todayClicks', todayClicks);
         localStorage.setItem('veg_lastDate', lastDate);
         localStorage.setItem('veg_currentTreeClicks', currentTreeClicks);
@@ -265,7 +279,82 @@
         localStorage.setItem('veg_treeSeed', treeSeed);
     }
 
-    // --- Canvas 樹木繪製演算法 ---
+    function syncToGoogleSheet() {
+        const statusEl = document.getElementById('syncStatus');
+        statusEl.textContent = '☁️ 正在同步進度至雲端...';
+
+        const payload = {
+            nickname: nickname,
+            pin: pin,
+            todayClicks: todayClicks,
+            currentTreeClicks: currentTreeClicks,
+            totalTreesCollected: totalTreesCollected,
+            treeSeed: treeSeed
+        };
+
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                statusEl.textContent = '✅ 已成功同步至 Google 試算表';
+            } else {
+                statusEl.textContent = '⚠️ 雲端同步回應異常';
+            }
+            setTimeout(() => { statusEl.textContent = ''; }, 3000);
+        })
+        .catch(() => {
+            statusEl.textContent = '⚠️ 網路連線問題，資料已先存於本機';
+            setTimeout(() => { statusEl.textContent = ''; }, 3000);
+        });
+    }
+
+    function loadCloudDataPrompt() {
+        const inputNk = prompt('請輸入您的「暱稱」：', nickname);
+        const inputPin = prompt('請輸入您的「4 位數暗號」：', pin);
+
+        if (!inputNk || !inputPin) return;
+
+        const statusEl = document.getElementById('syncStatus');
+        statusEl.textContent = '🔍 正在搜尋雲端資料...';
+
+        fetch(`${GOOGLE_SCRIPT_URL}?nickname=${encodeURIComponent(inputNk)}&pin=${encodeURIComponent(inputPin)}`)
+        .then(res => res.json())
+        .then(res => {
+            if (res.status === 'success') {
+                const data = res.data;
+                nickname = data.nickname;
+                pin = data.pin;
+                todayClicks = Number(data.todayClicks);
+                currentTreeClicks = Number(data.currentTreeClicks);
+                totalTreesCollected = Number(data.totalTreesCollected);
+                treeSeed = Number(data.treeSeed);
+
+                localStorage.setItem('veg_nickname', nickname);
+                localStorage.setItem('veg_pin', pin);
+                saveLocalData();
+
+                targetGrowth = currentTreeClicks;
+                currentGrowth = currentTreeClicks;
+
+                checkUserCredentials();
+                updateUI();
+                render();
+                alert(`🎉 歡迎回來 ${nickname}！成功復原小樹與圖鑑進度！`);
+            } else {
+                alert('❌ 找不到對應的記錄，請檢查暱稱與暗號是否正確。');
+            }
+            statusEl.textContent = '';
+        })
+        .catch(() => {
+            alert('⚠️ 讀取失敗，請確認網路連線與 Google 腳本網址。');
+            statusEl.textContent = '';
+        });
+    }
+
     function drawTree(startX, startY, len, angle, branchWidth, depth, growthProgress) {
         if (depth === 0 || len <= 2) return;
 
@@ -282,7 +371,6 @@
         ctx.lineTo(0, -len);
         ctx.stroke();
 
-        // 葉子繪製 (成長進度 > 2 開始顯現)
         if (depth <= 3 && growthProgress > 2) {
             const leafSize = Math.min(9, (growthProgress / MAX_TREE_CLICKS) * 11);
             ctx.beginPath();
@@ -309,36 +397,32 @@
         currentPRNGState = treeSeed;
 
         if (currentGrowth < 1) {
-            // 種子
             ctx.fillStyle = '#795548';
             ctx.beginPath();
-            ctx.ellipse(200, 325, 7, 5, 0, 0, Math.PI * 2);
+            ctx.ellipse(200, 305, 7, 5, 0, 0, Math.PI * 2);
             ctx.fill();
         } else if (currentGrowth < 3) {
-            // 幼苗
             const sproutHeight = currentGrowth * 12;
             ctx.beginPath();
             ctx.strokeStyle = '#8bc34a';
             ctx.lineWidth = 4;
-            ctx.moveTo(200, 330);
-            ctx.lineTo(200, 330 - sproutHeight);
+            ctx.moveTo(200, 310);
+            ctx.lineTo(200, 310 - sproutHeight);
             ctx.stroke();
 
             ctx.fillStyle = '#8bc34a';
             ctx.beginPath();
-            ctx.arc(194, 330 - sproutHeight, 5, 0, Math.PI * 2);
-            ctx.arc(206, 330 - sproutHeight, 5, 0, Math.PI * 2);
+            ctx.arc(194, 310 - sproutHeight, 5, 0, Math.PI * 2);
+            ctx.arc(206, 310 - sproutHeight, 5, 0, Math.PI * 2);
             ctx.fill();
         } else {
-            // 大樹 (按 15 次成長比率調整)
             const maxDepth = Math.min(10, Math.floor(3 + currentGrowth / 1.8));
-            const trunkLength = Math.min(82, 22 + currentGrowth * 4.2);
+            const trunkLength = Math.min(78, 22 + currentGrowth * 4.0);
             const trunkWidth = Math.min(14, 2 + currentGrowth * 0.8);
 
-            drawTree(200, 330, trunkLength, 0, trunkWidth, maxDepth, currentGrowth);
+            drawTree(200, 310, trunkLength, 0, trunkWidth, maxDepth, currentGrowth);
         }
 
-        // 蔬食/葉子飄落粒子
         if (particles.length > 0) {
             particles.forEach(p => {
                 ctx.font = `${p.size}px sans-serif`;
@@ -363,7 +447,7 @@
                 particles[i].y += particles[i].vy;
                 particles[i].x += particles[i].vx;
                 particles[i].opacity -= 0.015;
-                if (particles[i].y > 330 || particles[i].opacity <= 0) {
+                if (particles[i].y > 310 || particles[i].opacity <= 0) {
                     particles.splice(i, 1);
                 }
             }
@@ -394,7 +478,6 @@
         if (!isAnimating) animate();
     }
 
-    // --- UI 與邏輯更新 ---
     function updateUI() {
         checkDailyReset();
 
@@ -405,22 +488,17 @@
         const actionBtn = document.getElementById('actionBtn');
         const messageEl = document.getElementById('message');
 
-        // 情況 1：這棵樹已經達到 15 次，可以收穫了
         if (currentTreeClicks >= MAX_TREE_CLICKS) {
             actionBtn.disabled = false;
             actionBtn.classList.add('btn-harvest');
             actionBtn.textContent = '🎉 大樹完熟！點擊收穫並種植新樹';
             messageEl.textContent = '🌟 太棒了！這棵小樹因您的蔬食行動長成大樹囉！';
-        } 
-        // 情況 2：今日蔬食次數已達 3 次上限
-        else if (todayClicks >= MAX_DAILY_CLICKS) {
+        } else if (todayClicks >= MAX_DAILY_CLICKS) {
             actionBtn.disabled = true;
             actionBtn.classList.remove('btn-harvest');
             actionBtn.textContent = '🥗 今天蔬食次數已達上限';
             messageEl.textContent = '👏 今天已完成 3 次蔬食紀錄！小樹正在茁壯，明天繼續加油！';
-        } 
-        // 情況 3：還可以繼續點擊吃蔬食
-        else {
+        } else {
             actionBtn.disabled = false;
             actionBtn.classList.remove('btn-harvest');
             const remaining = MAX_DAILY_CLICKS - todayClicks;
@@ -434,7 +512,6 @@
     function renderGallery() {
         const grid = document.getElementById('animalsGrid');
         grid.innerHTML = '';
-        
         let unlockedCount = 0;
 
         ANIMAL_LIST.forEach(animal => {
@@ -456,59 +533,39 @@
         document.getElementById('animalProgress').textContent = `(${unlockedCount}/${ANIMAL_LIST.length} 解鎖)`;
     }
 
-    // 按鈕點擊主事件
     function handleAction() {
         checkDailyReset();
 
-        // 點擊「收穫大樹」
         if (currentTreeClicks >= MAX_TREE_CLICKS) {
             totalTreesCollected++;
             currentTreeClicks = 0;
             targetGrowth = 0;
             currentGrowth = 0;
-            treeSeed = Math.floor(Math.random() * 100000); // 隨機生成新樹姿態
+            treeSeed = Math.floor(Math.random() * 100000);
 
-            saveData();
+            saveLocalData();
+            syncToGoogleSheet();
             updateUI();
             if (!isAnimating) animate();
 
-            alert('🌳 恭喜收穫 1 棵成熟大樹！已放入您的圖鑑中，並準備好種植下一棵新種子囉！');
+            alert('🌳 恭喜收穫 1 棵成熟大樹！已寫入雲端圖鑑，並準備好種植下一顆新種子囉！');
             return;
         }
 
-        // 點擊「吃蔬食」
         if (todayClicks < MAX_DAILY_CLICKS && currentTreeClicks < MAX_TREE_CLICKS) {
             todayClicks++;
             currentTreeClicks++;
-            
             targetGrowth = currentTreeClicks;
 
-            saveData();
+            saveLocalData();
+            syncToGoogleSheet();
             updateUI();
             triggerVeggieAnimation();
         }
     }
 
-    // 重置所有資料
-    function resetAllData() {
-        if (confirm('確定要清除所有累積紀錄（包含大樹與解鎖的動物圖鑑）重新開始嗎？')) {
-            localStorage.clear();
-            todayClicks = 0;
-            lastDate = getTodayString();
-            currentTreeClicks = 0;
-            totalTreesCollected = 0;
-            treeSeed = Math.floor(Math.random() * 100000);
-
-            targetGrowth = 0;
-            currentGrowth = 0;
-
-            saveData();
-            updateUI();
-            if (!isAnimating) animate();
-        }
-    }
-
-    // 初始化
+    // 初始化流程
+    checkUserCredentials();
     checkDailyReset();
     updateUI();
     render();
