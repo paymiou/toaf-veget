@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>吃蔬種樹-小樹苗養成記</title>
+    <title>蔬食小樹日記 - 雲端養成版</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -254,7 +254,7 @@
     function checkUserCredentials() {
         if (!nickname || !pin) {
             nickname = prompt('歡迎來到蔬食日記！請輸入您的「暱稱」：') || `蔬食愛好者${Math.floor(Math.random()*1000)}`;
-            pin = prompt('請設定您的「4 位數暗號」（用於換手機時撈回進度）：') || '1234';
+            pin = prompt('請輸入您的「手機後 3 碼」（用於換手機時撈回進度）：') || '000';
             
             localStorage.setItem('veg_nickname', nickname);
             localStorage.setItem('veg_pin', pin);
@@ -314,7 +314,7 @@
 
     function loadCloudDataPrompt() {
         const inputNk = prompt('請輸入您的「暱稱」：', nickname);
-        const inputPin = prompt('請輸入您的「4 位數暗號」：', pin);
+        const inputPin = prompt('請輸入您的「手機後 3 碼」：', pin);
 
         if (!inputNk || !inputPin) return;
 
@@ -345,7 +345,7 @@
                 render();
                 alert(`🎉 歡迎回來 ${nickname}！成功復原小樹與圖鑑進度！`);
             } else {
-                alert('❌ 找不到對應的記錄，請檢查暱稱與暗號是否正確。');
+                alert('❌ 找不到對應的記錄，請檢查「暱稱」與「手機後 3 碼」是否正確。');
             }
             statusEl.textContent = '';
         })
