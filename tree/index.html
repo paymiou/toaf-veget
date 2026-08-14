@@ -232,12 +232,12 @@
         { name: "溫馨刺蝟", icon: "🦔", requiredTrees: 12 }
     ];
 
-    // 🔗 預載 15 張 GitHub 圖片素材
+    // 🔗 預載 15 張 GitHub 透明 PNG 圖片素材
     const TREE_IMAGE_BASE_URL = "https://paymiou.github.io/toaf-veget/tree/tree";
     const treeImages = [];
     for (let i = 1; i <= 15; i++) {
         const img = new Image();
-        img.src = `${TREE_IMAGE_BASE_URL}${i}.jpg`;
+        img.src = `${TREE_IMAGE_BASE_URL}${i}.png`; // ✨ 已全面更新為 .png
         treeImages.push(img);
     }
 
@@ -402,42 +402,39 @@
         });
     }
 
-    // 🌲 🌟 繪製背景大森林（過去收穫的成果）
+    // 🌲 繪製背景大森林 (過去收穫的所有樹木縮圖)
     function drawForestBackground(totalTrees, wind) {
         if (totalTrees <= 0) return;
 
-        const fullTreeImg = treeImages[14]; // 拿第 15 階段成熟大樹當背景縮圖
+        const fullTreeImg = treeImages[14]; // 第 15 階段 PNG 大樹
         if (!fullTreeImg || !fullTreeImg.complete) return;
 
-        const displayCount = Math.min(totalTrees, 24); // 最多繪製 24 棵形成大森林
+        const displayCount = Math.min(totalTrees, 24);
 
         for (let i = 0; i < displayCount; i++) {
             ctx.save();
 
-            // 交替排列在中央奇蹟樹的左右兩側地平線上
             const isLeft = i % 2 === 0;
             const pairIndex = Math.floor(i / 2);
 
-            // 算座標與縮放比例 (越後面的樹稍微越小，呈現透視景深)
             const xOffset = 52 + (pairIndex * 26) % 135;
             const posX = isLeft ? 200 - xOffset : 200 + xOffset;
             const posY = 308 + ((i * 7) % 9); 
-            const scale = 0.28 + ((i * 3) % 10) / 100; // 縮小為 28% ~ 38%
+            const scale = 0.28 + ((i * 3) % 10) / 100;
 
-            // 獨立的擺動相位與幅度，讓森林看起來像有生命力
             const phase = i * 1.4;
             const sway = Math.sin(wind * 0.8 + phase) * 0.035;
 
-            // 背景小樹的地面柔和陰影
+            // 背景小樹陰影
             ctx.fillStyle = 'rgba(120, 100, 80, 0.1)';
             ctx.beginPath();
             ctx.ellipse(posX, posY, 22 * scale, 6 * scale, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // 繪製背景小樹
+            // 繪製背景小樹 (標準 PNG 透明疊加)
             ctx.translate(posX, posY);
             ctx.rotate(sway);
-            ctx.globalCompositeOperation = 'multiply';
+            ctx.globalCompositeOperation = 'source-over';
 
             const baseImgSize = 250;
             const drawSize = baseImgSize * scale;
@@ -447,7 +444,7 @@
         }
     }
 
-    // 🖼️ 渲染中央正在養成的奇蹟樹
+    // 🖼️ 渲染中央正在養成的奇蹟樹 (PNG 透明版)
     function drawImageTree(growth, wind) {
         ctx.save();
         
@@ -469,7 +466,8 @@
             const sway = Math.sin(wind) * (0.015 + growth * 0.001);
             ctx.rotate(sway);
 
-            ctx.globalCompositeOperation = 'multiply';
+            // ✨ 使用標準 source-over 繪製，呈現原汁原味鮮豔手繪水彩質感
+            ctx.globalCompositeOperation = 'source-over';
 
             const imgSize = 250;
             ctx.drawImage(currentImg, -imgSize / 2, -imgSize + 10, imgSize, imgSize);
@@ -494,13 +492,13 @@
             bounceScale = 1;
         }
 
-        // 1. 🌟 先繪製背景大森林 (過去收穫的所有樹木縮圖)
+        // 1. 繪製背景大森林
         drawForestBackground(totalTreesCollected, windAngle);
 
-        // 2. 🌟 再繪製中央正在養成的奇蹟樹
+        // 2. 繪製中央奇蹟樹
         drawImageTree(currentGrowth, windAngle);
 
-        // 3. 🌟 繪製飄落蔬食粒子
+        // 3. 繪製飄落蔬食粒子
         if (particles.length > 0) {
             for (let i = particles.length - 1; i >= 0; i--) {
                 const p = particles[i];
@@ -607,7 +605,7 @@
             syncToGoogleSheet();
             updateUI();
 
-            alert('🌳 恭喜收穫 1 棵奇蹟大樹！準備好種植下一顆新種子囉！');
+            alert('🌳 恭喜收穫 1 棵奇蹟大樹！已寫入餐桌大森林雲端圖鑑，並準備好種植下一顆新種子囉！');
             return;
         }
 
