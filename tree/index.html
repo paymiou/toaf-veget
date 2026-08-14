@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小樹養成日記 - 動態成長版</title>
+    <title>蔬食小樹日記 - 綠色養成圖鑑</title>
     <style>
         * {
             box-sizing: border-box;
         }
         body {
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-            background-color: #f3f8f2;
+            background-color: #f0f7f2;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,40 +20,41 @@
         }
         .app-card {
             background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-radius: 24px;
+            box-shadow: 0 12px 35px rgba(46, 90, 53, 0.1);
             width: 100%;
-            max-width: 450px;
+            max-width: 460px;
             overflow: hidden;
             text-align: center;
         }
         .header {
-            padding: 20px;
-            background: #e7f3e8;
-            border-bottom: 1px solid #d2e7d4;
+            padding: 20px 20px 15px;
+            background: #e8f5e9;
+            border-bottom: 1px solid #c8e6c9;
         }
         .header h1 {
             margin: 0;
             font-size: 22px;
-            color: #2e5a35;
+            color: #2e7d32;
         }
         .stats {
             display: flex;
             justify-content: space-around;
             margin-top: 15px;
-            color: #4a7050;
-            font-size: 14px;
+            color: #388e3c;
+            font-size: 13px;
         }
         .stat-box strong {
             display: block;
-            font-size: 20px;
-            color: #2e5a35;
+            font-size: 18px;
+            color: #1b5e20;
+            margin-top: 2px;
         }
         /* Canvas 畫布區 */
         .canvas-container {
             position: relative;
-            background: linear-gradient(to bottom, #eaf6ff 0%, #ffffff 80%, #e5d3b3 80%, #c4a77d 100%);
-            height: 380px;
+            background: linear-gradient(to bottom, #e8f5e9 0%, #ffffff 80%, #d7ccc8 80%, #a1887f 100%);
+            height: 360px;
             display: flex;
             justify-content: center;
             align-items: flex-end;
@@ -62,40 +63,99 @@
             display: block;
         }
         .controls {
-            padding: 25px 20px;
+            padding: 20px;
         }
-        .btn-water {
-            background: linear-gradient(135deg, #42a5f5, #1e88e5);
+        .btn-action {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
             color: white;
             border: none;
-            padding: 14px 35px;
-            font-size: 18px;
+            padding: 14px 28px;
+            font-size: 17px;
             font-weight: bold;
             border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+            box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
             transition: all 0.2s ease;
+            width: 100%;
+            max-width: 320px;
         }
-        .btn-water:hover:not(:disabled) {
+        .btn-action:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(30, 136, 229, 0.4);
+            box-shadow: 0 6px 16px rgba(67, 160, 71, 0.4);
         }
-        .btn-water:disabled {
+        .btn-action:disabled {
             background: #bdbdbd;
             box-shadow: none;
             cursor: not-allowed;
         }
+        .btn-harvest {
+            background: linear-gradient(135deg, #ffa726, #fb8c00) !important;
+            box-shadow: 0 4px 12px rgba(251, 140, 0, 0.3) !important;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
         .message {
-            margin-top: 12px;
+            margin-top: 10px;
             font-size: 13px;
-            color: #757575;
+            color: #666;
             min-height: 18px;
+        }
+
+        /* 圖鑑區塊 */
+        .gallery-section {
+            border-top: 1px dashed #e0e0e0;
+            padding: 15px 20px 20px;
+            background: #fafafa;
+        }
+        .gallery-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .animal-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 8px 4px;
+            font-size: 11px;
+            color: #757575;
+            transition: all 0.3s ease;
+        }
+        .animal-card.unlocked {
+            border-color: #81c784;
+            background: #f1f8e9;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .animal-icon {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 4px;
+            filter: grayscale(100%);
+            opacity: 0.3;
+        }
+        .animal-card.unlocked .animal-icon {
+            filter: grayscale(0%);
+            opacity: 1;
         }
         .reset-link {
             display: inline-block;
-            margin-top: 15px;
-            color: #a0a0a0;
-            font-size: 12px;
+            margin-top: 12px;
+            color: #b0bec5;
+            font-size: 11px;
             text-decoration: underline;
             cursor: pointer;
         }
@@ -105,79 +165,113 @@
 
 <div class="app-card">
     <div class="header">
-        <h1>🌱 小樹養成日記</h1>
+        <h1>🥗 蔬食養成日記</h1>
         <div class="stats">
-            <div class="stat-box">累積天數<strong id="days">0</strong></div>
-            <div class="stat-box">成長進度<strong id="progress">0%</strong></div>
+            <div class="stat-box">今日蔬食<strong id="todayVeg">0 / 3 次</strong></div>
+            <div class="stat-box">小樹進度<strong id="progress">0 / 15</strong></div>
+            <div class="stat-box">累積大樹<strong id="treeCount">0 棵</strong></div>
         </div>
     </div>
 
     <div class="canvas-container">
-        <!-- 移除寫死的寬高，改由 JS 動態設定支援 Retina -->
         <canvas id="treeCanvas"></canvas>
     </div>
 
     <div class="controls">
-        <button id="waterBtn" class="btn-water" onclick="waterTree()">💧 澆水照顧</button>
+        <button id="actionBtn" class="btn-action" onclick="handleAction()">🥗 我今天吃蔬食</button>
         <div id="message" class="message"></div>
-        <span class="reset-link" onclick="resetTree()">重新種植新種子</span>
+    </div>
+
+    <!-- 🌳 動物圖鑑區 -->
+    <div class="gallery-section">
+        <div class="gallery-title">
+            <span>🐾 森林動物圖鑑</span>
+            <span id="animalProgress" style="font-size:12px; font-weight:normal; color:#666;">(0/4 解鎖)</span>
+        </div>
+        <div class="animals-grid" id="animalsGrid">
+            <!-- 動物卡片會由 JavaScript 動態生成 -->
+        </div>
+        <span class="reset-link" onclick="resetAllData()">重置所有數據 (重新開始)</span>
     </div>
 </div>
 
 <script>
+    const MAX_DAILY_CLICKS = 3;  // 一天最多 3 次
+    const MAX_TREE_CLICKS = 15;  // 15 次滿級成大樹
+    const TREES_PER_ANIMAL = 3;  // 每 3 棵大樹解鎖 1 隻動物
+
+    // 定義可解鎖的動物圖鑑
+    const ANIMAL_LIST = [
+        { name: "萌萌兔", icon: "🐰", requiredTrees: 3 },
+        { name: "靈巧松鼠", icon: "🐿️", requiredTrees: 6 },
+        { name: "溫和梅花鹿", icon: "🦌", requiredTrees: 9 },
+        { name: "溫馨刺蝟", icon: "🦔", requiredTrees: 12 }
+    ];
+
+    // Canvas 相關設定
     const canvas = document.getElementById('treeCanvas');
     const ctx = canvas.getContext('2d');
-
-    // 🌟 優化 1：Retina 高解析度螢幕適配
     const logicalWidth = 400;
-    const logicalHeight = 380;
+    const logicalHeight = 360;
     const dpr = window.devicePixelRatio || 1;
-    canvas.style.width = '100%'; // 讓 CSS 彈性控制
+
+    canvas.style.width = '100%';
     canvas.style.maxWidth = `${logicalWidth}px`;
     canvas.style.height = `${logicalHeight}px`;
     canvas.width = logicalWidth * dpr;
     canvas.height = logicalHeight * dpr;
-    ctx.scale(dpr, dpr); // 將座標系縮放，繪圖程式碼只需照原本的 (0~400) 邏輯寫即可
+    ctx.scale(dpr, dpr);
 
-    // 養成狀態變數
-    let waterCount = parseInt(localStorage.getItem('canvasTree_days')) || 0;
-    let lastWateredDate = localStorage.getItem('canvasTree_lastDate') || '';
-    
-    // 🌟 優化 2：專屬樹木基因（每次重置都長得不一樣）
-    let treeSeed = parseInt(localStorage.getItem('canvasTree_seed'));
-    if (!treeSeed) {
-        treeSeed = Math.floor(Math.random() * 100000);
-        localStorage.setItem('canvasTree_seed', treeSeed);
-    }
-    
-    // 簡易隨機數生成器 (PRNG)，確保同一顆種子每次畫出來的樹枝角度都一樣
+    // 狀態變數 (從 LocalStorage 讀取)
+    let todayClicks = parseInt(localStorage.getItem('veg_todayClicks')) || 0;
+    let lastDate = localStorage.getItem('veg_lastDate') || '';
+    let currentTreeClicks = parseInt(localStorage.getItem('veg_currentTreeClicks')) || 0;
+    let totalTreesCollected = parseInt(localStorage.getItem('veg_treesCollected')) || 0;
+    let treeSeed = parseInt(localStorage.getItem('veg_treeSeed')) || Math.floor(Math.random() * 100000);
+
+    // 動畫補間變數
+    let currentGrowth = currentTreeClicks;
+    let targetGrowth = currentTreeClicks;
+    let isAnimating = false;
+    let particles = [];
+
+    // PRNG 隨機生成樹形
     let currentPRNGState = treeSeed;
     function seededRandom() {
         currentPRNGState = (currentPRNGState * 9301 + 49297) % 233280;
         return currentPRNGState / 233280;
     }
 
-    // 動畫控制
-    let currentGrowth = waterCount; 
-    let targetGrowth = waterCount;
-    let isAnimating = false;
-    const MAX_DAYS = 30;
-
-    // 🌟 優化 3：水滴粒子系統
-    let particles = [];
-
     function getTodayString() {
         const today = new Date();
         return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     }
 
-    // Canvas 繪圖與動態樹演算法
+    // 檢查日期是否換日，換日則重置今日點擊次數
+    function checkDailyReset() {
+        const today = getTodayString();
+        if (lastDate !== today) {
+            todayClicks = 0;
+            lastDate = today;
+            saveData();
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('veg_todayClicks', todayClicks);
+        localStorage.setItem('veg_lastDate', lastDate);
+        localStorage.setItem('veg_currentTreeClicks', currentTreeClicks);
+        localStorage.setItem('veg_treesCollected', totalTreesCollected);
+        localStorage.setItem('veg_treeSeed', treeSeed);
+    }
+
+    // --- Canvas 樹木繪製演算法 ---
     function drawTree(startX, startY, len, angle, branchWidth, depth, growthProgress) {
         if (depth === 0 || len <= 2) return;
 
         ctx.beginPath();
         ctx.save();
-        ctx.strokeStyle = depth > 2 ? '#5c4033' : '#3e2723';
+        ctx.strokeStyle = depth > 2 ? '#4e342e' : '#3e2723';
         ctx.lineWidth = branchWidth;
         ctx.lineCap = 'round';
 
@@ -188,19 +282,18 @@
         ctx.lineTo(0, -len);
         ctx.stroke();
 
-        // 繪製樹葉
-        if (depth <= 3 && growthProgress > 3) {
-            const leafSize = Math.min(8, (growthProgress / MAX_DAYS) * 10);
+        // 葉子繪製 (成長進度 > 2 開始顯現)
+        if (depth <= 3 && growthProgress > 2) {
+            const leafSize = Math.min(9, (growthProgress / MAX_TREE_CLICKS) * 11);
             ctx.beginPath();
             ctx.fillStyle = depth === 1 ? '#4caf50' : '#2e7d32';
             ctx.arc(0, -len, leafSize, 0, Math.PI * 2);
             ctx.fill();
         }
 
-        // 透過 PRNG 產生樹枝發散角度與長度（賦予生命力）
-        const spreadAngleLeft = 15 + seededRandom() * 20;  // 15~35度
-        const spreadAngleRight = 15 + seededRandom() * 20; // 15~35度
-        const childLenLeft = len * (0.65 + seededRandom() * 0.15); // 長度比例隨機
+        const spreadAngleLeft = 15 + seededRandom() * 20;
+        const spreadAngleRight = 15 + seededRandom() * 20;
+        const childLenLeft = len * (0.65 + seededRandom() * 0.15);
         const childLenRight = len * (0.65 + seededRandom() * 0.15);
 
         if (depth > 1) {
@@ -211,80 +304,73 @@
         ctx.restore();
     }
 
-    // 渲染整個場景 (包含樹與水滴)
     function render() {
         ctx.clearRect(0, 0, logicalWidth, logicalHeight);
-        
-        // 每次渲染前重置種子，保證畫面穩定不閃爍
         currentPRNGState = treeSeed;
 
         if (currentGrowth < 1) {
             // 種子
             ctx.fillStyle = '#795548';
             ctx.beginPath();
-            ctx.ellipse(200, 345, 8, 5, 0, 0, Math.PI * 2);
+            ctx.ellipse(200, 325, 7, 5, 0, 0, Math.PI * 2);
             ctx.fill();
         } else if (currentGrowth < 3) {
-            // 剛發芽
-            const sproutHeight = currentGrowth * 15;
+            // 幼苗
+            const sproutHeight = currentGrowth * 12;
             ctx.beginPath();
             ctx.strokeStyle = '#8bc34a';
             ctx.lineWidth = 4;
-            ctx.moveTo(200, 350);
-            ctx.lineTo(200, 350 - sproutHeight);
+            ctx.moveTo(200, 330);
+            ctx.lineTo(200, 330 - sproutHeight);
             ctx.stroke();
 
             ctx.fillStyle = '#8bc34a';
             ctx.beginPath();
-            ctx.arc(195, 350 - sproutHeight, 5, 0, Math.PI * 2);
-            ctx.arc(205, 350 - sproutHeight, 5, 0, Math.PI * 2);
+            ctx.arc(194, 330 - sproutHeight, 5, 0, Math.PI * 2);
+            ctx.arc(206, 330 - sproutHeight, 5, 0, Math.PI * 2);
             ctx.fill();
         } else {
-            // 大樹
-            const maxDepth = Math.min(10, Math.floor(3 + currentGrowth / 4));
-            const trunkLength = Math.min(80, 20 + currentGrowth * 2.5);
-            const trunkWidth = Math.min(14, 2 + currentGrowth * 0.4);
+            // 大樹 (按 15 次成長比率調整)
+            const maxDepth = Math.min(10, Math.floor(3 + currentGrowth / 1.8));
+            const trunkLength = Math.min(82, 22 + currentGrowth * 4.2);
+            const trunkWidth = Math.min(14, 2 + currentGrowth * 0.8);
 
-            drawTree(200, 350, trunkLength, 0, trunkWidth, maxDepth, currentGrowth);
+            drawTree(200, 330, trunkLength, 0, trunkWidth, maxDepth, currentGrowth);
         }
 
-        // 繪製水滴粒子
+        // 蔬食/葉子飄落粒子
         if (particles.length > 0) {
-            ctx.fillStyle = 'rgba(66, 165, 245, 0.7)';
             particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.font = `${p.size}px sans-serif`;
+                ctx.fillText(p.char, p.x, p.y);
             });
         }
     }
 
-    // 主動畫迴圈：整合成長過渡與水滴掉落
     function animate() {
         isAnimating = true;
         let isGrowing = Math.abs(targetGrowth - currentGrowth) > 0.01;
         let hasParticles = particles.length > 0;
 
-        // 樹木成長平滑邏輯
         if (isGrowing) {
-            currentGrowth += (targetGrowth - currentGrowth) * 0.05;
+            currentGrowth += (targetGrowth - currentGrowth) * 0.08;
         } else {
             currentGrowth = targetGrowth;
         }
 
-        // 水滴掉落邏輯
         if (hasParticles) {
             for (let i = particles.length - 1; i >= 0; i--) {
                 particles[i].y += particles[i].vy;
-                if (particles[i].y > 350) {
-                    particles.splice(i, 1); // 落地後消失
+                particles[i].x += particles[i].vx;
+                particles[i].opacity -= 0.015;
+                if (particles[i].y > 330 || particles[i].opacity <= 0) {
+                    particles.splice(i, 1);
                 }
             }
         }
 
         render();
 
-        // 只有在需要更新時才繼續呼叫 requestAnimationFrame，節省效能
         if (isGrowing || hasParticles) {
             requestAnimationFrame(animate);
         } else {
@@ -292,72 +378,138 @@
         }
     }
 
-    function createWaterAnimation() {
-        for (let i = 0; i < 40; i++) {
+    function triggerVeggieAnimation() {
+        const chars = ['🥬', '🥦', '🥗', '🍃', '✨'];
+        for (let i = 0; i < 20; i++) {
             particles.push({
-                x: 100 + Math.random() * 200, // 隨機分佈在樹的上方
-                y: -10 - Math.random() * 150, // 從畫面頂端外開始掉
-                vy: 4 + Math.random() * 4,    // 掉落速度
-                radius: 2 + Math.random() * 2
+                x: 120 + Math.random() * 160,
+                y: -10 - Math.random() * 100,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: 2.5 + Math.random() * 2.5,
+                size: 14 + Math.random() * 10,
+                char: chars[Math.floor(Math.random() * chars.length)],
+                opacity: 1
             });
         }
         if (!isAnimating) animate();
     }
 
+    // --- UI 與邏輯更新 ---
     function updateUI() {
-        document.getElementById('days').textContent = waterCount;
-        const progressPercent = Math.min(100, Math.round((waterCount / MAX_DAYS) * 100));
-        document.getElementById('progress').textContent = `${progressPercent}%`;
+        checkDailyReset();
 
-        const today = getTodayString();
-        const waterBtn = document.getElementById('waterBtn');
+        document.getElementById('todayVeg').textContent = `${todayClicks} / ${MAX_DAILY_CLICKS} 次`;
+        document.getElementById('progress').textContent = `${currentTreeClicks} / ${MAX_TREE_CLICKS}`;
+        document.getElementById('treeCount').textContent = `${totalTreesCollected} 棵`;
+
+        const actionBtn = document.getElementById('actionBtn');
         const messageEl = document.getElementById('message');
 
-        if (lastWateredDate === today) {
-            waterBtn.disabled = true;
-            messageEl.textContent = '🌱 今天已經澆過水囉！樹木正在吸收養分，明天再來吧。';
-        } else {
-            waterBtn.disabled = false;
-            messageEl.textContent = '💧 小樹今天需要喝水，快點擊按鈕進行澆水！';
+        // 情況 1：這棵樹已經達到 15 次，可以收穫了
+        if (currentTreeClicks >= MAX_TREE_CLICKS) {
+            actionBtn.disabled = false;
+            actionBtn.classList.add('btn-harvest');
+            actionBtn.textContent = '🎉 大樹完熟！點擊收穫並種植新樹';
+            messageEl.textContent = '🌟 太棒了！這棵小樹因您的蔬食行動長成大樹囉！';
+        } 
+        // 情況 2：今日蔬食次數已達 3 次上限
+        else if (todayClicks >= MAX_DAILY_CLICKS) {
+            actionBtn.disabled = true;
+            actionBtn.classList.remove('btn-harvest');
+            actionBtn.textContent = '🥗 今天蔬食次數已達上限';
+            messageEl.textContent = '👏 今天已完成 3 次蔬食紀錄！小樹正在茁壯，明天繼續加油！';
+        } 
+        // 情況 3：還可以繼續點擊吃蔬食
+        else {
+            actionBtn.disabled = false;
+            actionBtn.classList.remove('btn-harvest');
+            const remaining = MAX_DAILY_CLICKS - todayClicks;
+            actionBtn.textContent = `🥗 我今天吃蔬食 (剩 ${remaining} 次)`;
+            messageEl.textContent = `🌱 每吃一餐蔬食點一次，幫助小樹成長 (每天限 ${MAX_DAILY_CLICKS} 次)`;
         }
+
+        renderGallery();
     }
 
-    function waterTree() {
-        const today = getTodayString();
-        if (lastWateredDate !== today) {
-            waterCount++;
-            lastWateredDate = today;
+    function renderGallery() {
+        const grid = document.getElementById('animalsGrid');
+        grid.innerHTML = '';
+        
+        let unlockedCount = 0;
 
-            localStorage.setItem('canvasTree_days', waterCount);
-            localStorage.setItem('canvasTree_lastDate', lastWateredDate);
+        ANIMAL_LIST.forEach(animal => {
+            const isUnlocked = totalTreesCollected >= animal.requiredTrees;
+            if (isUnlocked) unlockedCount++;
 
-            targetGrowth = waterCount;
-            
-            updateUI();
-            createWaterAnimation(); // 觸發澆水水滴動畫
-        }
+            const card = document.createElement('div');
+            card.className = `animal-card ${isUnlocked ? 'unlocked' : ''}`;
+            card.innerHTML = `
+                <span class="animal-icon">${animal.icon}</span>
+                <div>${animal.name}</div>
+                <div style="font-size:9px; margin-top:2px; color:${isUnlocked ? '#43a047' : '#9e9e9e'};">
+                    ${isUnlocked ? '已解鎖' : `${animal.requiredTrees} 棵樹`}
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        document.getElementById('animalProgress').textContent = `(${unlockedCount}/${ANIMAL_LIST.length} 解鎖)`;
     }
 
-    function resetTree() {
-        if (confirm('確定要清除紀錄，重新種植一顆新樹嗎？')) {
-            localStorage.removeItem('canvasTree_days');
-            localStorage.removeItem('canvasTree_lastDate');
-            
-            // 重新給定一顆新種子，讓下一顆樹長得不一樣
-            treeSeed = Math.floor(Math.random() * 100000);
-            localStorage.setItem('canvasTree_seed', treeSeed);
+    // 按鈕點擊主事件
+    function handleAction() {
+        checkDailyReset();
 
-            waterCount = 0;
-            lastWateredDate = '';
+        // 點擊「收穫大樹」
+        if (currentTreeClicks >= MAX_TREE_CLICKS) {
+            totalTreesCollected++;
+            currentTreeClicks = 0;
             targetGrowth = 0;
             currentGrowth = 0;
+            treeSeed = Math.floor(Math.random() * 100000); // 隨機生成新樹姿態
+
+            saveData();
+            updateUI();
+            if (!isAnimating) animate();
+
+            alert('🌳 恭喜收穫 1 棵成熟大樹！已放入您的圖鑑中，並準備好種植下一棵新種子囉！');
+            return;
+        }
+
+        // 點擊「吃蔬食」
+        if (todayClicks < MAX_DAILY_CLICKS && currentTreeClicks < MAX_TREE_CLICKS) {
+            todayClicks++;
+            currentTreeClicks++;
             
+            targetGrowth = currentTreeClicks;
+
+            saveData();
+            updateUI();
+            triggerVeggieAnimation();
+        }
+    }
+
+    // 重置所有資料
+    function resetAllData() {
+        if (confirm('確定要清除所有累積紀錄（包含大樹與解鎖的動物圖鑑）重新開始嗎？')) {
+            localStorage.clear();
+            todayClicks = 0;
+            lastDate = getTodayString();
+            currentTreeClicks = 0;
+            totalTreesCollected = 0;
+            treeSeed = Math.floor(Math.random() * 100000);
+
+            targetGrowth = 0;
+            currentGrowth = 0;
+
+            saveData();
             updateUI();
             if (!isAnimating) animate();
         }
     }
 
-    // 初始化執行
+    // 初始化
+    checkDailyReset();
     updateUI();
     render();
 </script>
