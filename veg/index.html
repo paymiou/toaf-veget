@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蔬食養樹｜15餐種出一棵樹</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  background: linear-gradient(180deg,#edf8e8,#ffffff);
+  color: #35523b;
+}
+
+button {
+  font-family: inherit;
+}
+
+.game {
+  width: min(620px,94%);
+  margin: auto;
+  padding: 25px 0 50px;
+}
+
+/* 標題 */
+.logo {
+  text-align:center;
+  font-size:40px;
+}
+
+.title {
+  text-align:center;
+  font-size:28px;
+  font-weight:900;
+}
+
+.subtitle {
+  text-align:center;
+  color:#78907a;
+  margin-top:5px;
+}
+
+/* 卡片 */
+.card {
+  background:rgba(255,255,255,.94);
+  border-radius:25px;
+  padding:20px;
+  margin-top:18px;
+  box-shadow:0 8px 30px rgba(50,90,55,.10);
+}
+
+/* 樹 */
+.tree-card {
+  text-align:center;
+}
+
+.tree {
+  width:100%;
+  max-width:390px;
+  height:350px;
+  object-fit:contain;
+  margin:auto;
+  display:block;
+}
+
+.tree.grow {
+  animation:treeGrow .7s ease;
+}
+
+@keyframes treeGrow {
+  0% {
+    transform:scale(.78);
+    opacity:.3;
+  }
+
+  55% {
+    transform:scale(1.08);
+    opacity:1;
+  }
+
+  100% {
+    transform:scale(1);
+  }
+}
+
+.stage {
+  font-size:23px;
+  font-weight:900;
+  color:#43814b;
+}
+
+.description {
+  color:#7b8f7d;
+  font-size:14px;
+  margin-top:5px;
+}
+
+/* 進度 */
+.progress-info {
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+  font-size:14px;
+}
+
+.progress-number {
+  font-weight:900;
+  color:#43814b;
+}
+
+.progress-bg {
+  height:14px;
+  background:#e1ecdf;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress {
+  width:0;
+  height:100%;
+  background:linear-gradient(90deg,#9bce72,#4b9c58);
+  transition:width .6s ease;
+}
+
+/* 今日 */
+.section-title {
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:13px;
+}
+
+.today-count {
+  float:right;
+  color:#4b9253;
+  font-size:14px;
+}
+
+.meals {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.meal {
+  border:2px solid #edf2eb;
+  background:white;
+  border-radius:18px;
+  padding:14px 5px;
+  cursor:pointer;
+  color:#35523b;
+  transition:.2s;
+}
+
+.meal:hover {
+  transform:translateY(-3px);
+  box-shadow:0 7px 18px rgba(50,90,55,.12);
+}
+
+.meal.done {
+  background:#e4f5df;
+  border-color:#8bc77c;
+}
+
+.meal-icon {
+  font-size:30px;
+}
+
+.meal-name {
+  font-weight:900;
+}
+
+.meal-status {
+  font-size:12px;
+  color:#89998a;
+  margin-top:4px;
+}
+
+.meal.done .meal-status {
+  color:#43814b;
+  font-weight:800;
+}
+
+/* 訊息 */
+.message {
+  min-height:25px;
+  text-align:center;
+  margin-top:13px;
+  font-size:14px;
+  color:#54825b;
+  font-weight:700;
+}
+
+/* 連續天數 */
+.streak {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:linear-gradient(135deg,#fff4cf,#fffbe9);
+}
+
+.streak-fire {
+  font-size:38px;
+}
+
+.streak-number {
+  font-size:28px;
+  font-weight:900;
+  color:#d98227;
+}
+
+/* 每日任務 */
+.task {
+  background:#f5faf3;
+  border-radius:18px;
+  padding:14px;
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.task-icon {
+  font-size:28px;
+}
+
+.task-info {
+  flex:1;
+}
+
+.task-title {
+  font-weight:900;
+}
+
+.task-progress {
+  font-size:13px;
+  color:#78907a;
+  margin-top:3px;
+}
+
+.task-reward {
+  font-weight:900;
+  color:#4b9253;
+}
+
+/* 生態 */
+.ecology {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+
+.creature {
+  text-align:center;
+  padding:12px 5px;
+  border-radius:16px;
+  background:#f3f5f3;
+  filter:grayscale(1);
+  opacity:.45;
+}
+
+.creature.unlocked {
+  background:#e7f6e2;
+  filter:none;
+  opacity:1;
+  animation:pop .5s ease;
+}
+
+.creature-icon {
+  font-size:28px;
+}
+
+.creature-name {
+  font-size:12px;
+  margin-top:3px;
+}
+
+@keyframes pop {
+  0% { transform:scale(.6); }
+  70% { transform:scale(1.12); }
+  100% { transform:scale(1); }
+}
+
+/* 成就 */
+.badges {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.badge {
+  text-align:center;
+  padding:12px 5px;
+  border-radius:16px;
+  background:#f2f4f2;
+  opacity:.45;
+  filter:grayscale(1);
+}
+
+.badge.unlocked {
+  opacity:1;
+  filter:none;
+  background:#fff7d5;
+}
+
+.badge-icon {
+  font-size:30px;
+}
+
+.badge-name {
+  font-size:12px;
+  font-weight:800;
+  margin-top:4px;
+}
+
+/* 碳積分 */
+.carbon {
+  text-align:center;
+  background:#e9ece9;
+  color:#89918a;
+}
+
+.carbon.unlocked {
+  background:linear-gradient(135deg,#dff5d8,#c3e9b8);
+  color:#376e3d;
+}
+
+.carbon-score {
+  font-size:43px;
+  font-weight:900;
+  margin:5px;
+}
+
+.carbon-button {
+  border:0;
+  border-radius:30px;
+  padding:11px 25px;
+  background:#4d9957;
+  color:white;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.carbon-button:disabled {
+  background:#aaa;
+  cursor:not-allowed;
+}
+
+/* 完成 */
+.complete {
+  display:none;
+  text-align:center;
+  background:linear-gradient(135deg,#fff8cf,#fffdf0);
+  line-height:1.8;
+}
+
+.complete.show {
+  display:block;
+  animation:complete .8s ease;
+}
+
+@keyframes complete {
+  0% {
+    transform:scale(.7);
+    opacity:0;
+  }
+
+  70% {
+    transform:scale(1.05);
+  }
+
+  100% {
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+/* 手機 */
+@media(max-width:480px) {
+
+  .tree {
+    height:310px;
+  }
+
+  .title {
+    font-size:25px;
+  }
+
+  .meals {
+    gap:6px;
+  }
+
+  .ecology {
+    grid-template-columns:repeat(4,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+  <div class="logo">🌱</div>
+
+  <div class="title">
+    蔬食養樹
+  </div>
+
+  <div class="subtitle">
+    今天吃蔬食，讓樹木長大一點
+  </div>
+
+
+  <!-- 樹木 -->
+  <div class="card tree-card">
+
+    <img
+      id="treeImage"
+      class="tree"
+      src="tree/tree_stage_01.png"
+      alt="樹木"
+    >
+
+    <div id="stage" class="stage">
+      🌱 種子
+    </div>
+
+    <div id="description" class="description">
+      你的綠色行動，從一餐開始
+    </div>
+
+    <div style="margin-top:18px">
+
+      <div class="progress-info">
+
+        <span>
+          🌳 成長進度
+        </span>
+
+        <span
+          id="progressNumber"
+          class="progress-number"
+        >
+          0 / 15 餐
+        </span>
+
+      </div>
+
+      <div class="progress-bg">
+
+        <div
+          id="progress"
+          class="progress"
+        ></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 今日蔬食 -->
+
+  <div class="card">
+
+    <div class="section-title">
+
+      🥗 今日蔬食
+
+      <span
+        id="todayCount"
+        class="today-count"
+      >
+        0 / 3 餐
+      </span>
+
+    </div>
+
+    <div class="meals">
+
+      <button
+        class="meal"
+        data-meal="breakfast"
+      >
+        <div class="meal-icon">🥣</div>
+        <div class="meal-name">早餐</div>
+        <div class="meal-status">點擊記錄</div>
+      </button>
+
+      <button
+        class="meal"
+        data-meal="lunch"
+      >
+        <div class="meal-icon">🍱</div>
+        <div class="meal-name">午餐</div>
+        <div class="meal-status">點擊記錄</div>
+      </button>
+
+      <button
+        class="meal"
+        data-meal="dinner"
+      >
+        <div class="meal-icon">🍲</div>
+        <div class="meal-name">晚餐</div>
+        <div class="meal-status">點擊記錄</div>
+      </button>
+
+    </div>
+
+    <div id="message" class="message"></div>
+
+  </div>
+
+
+  <!-- 連續天數 -->
+
+  <div class="card streak">
+
+    <div>
+
+      <div class="section-title">
+        🔥 綠色行動
+      </div>
+
+      <div>
+        連續吃蔬食
+      </div>
+
+    </div>
+
+    <div>
+
+      <div
+        id="streak"
+        class="streak-number"
+      >
+        0 天
+      </div>
+
+      <div class="streak-fire">
+        🔥
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 每日任務 -->
+
+  <div class="card">
+
+    <div class="section-title">
+      🎯 今日任務
+    </div>
+
+    <div class="task">
+
+      <div class="task-icon">
+        🥗
+      </div>
+
+      <div class="task-info">
+
+        <div class="task-title">
+          完成今天的蔬食行動
+        </div>
+
+        <div
+          id="taskProgress"
+          class="task-progress"
+        >
+          0 / 2 餐
+        </div>
+
+      </div>
+
+      <div
+        id="taskReward"
+        class="task-reward"
+      >
+        +10 ⭐
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 生態系 -->
+
+  <div class="card">
+
+    <div class="section-title">
+      🐝 我的生態系
+    </div>
+
+    <div class="ecology">
+
+      <div
+        class="creature"
+        id="flower"
+      >
+        <div class="creature-icon">🌼</div>
+        <div class="creature-name">小花</div>
+      </div>
+
+      <div
+        class="creature"
+        id="butterfly"
+      >
+        <div class="creature-icon">🦋</div>
+        <div class="creature-name">蝴蝶</div>
+      </div>
+
+      <div
+        class="creature"
+        id="bee"
+      >
+        <div class="creature-icon">🐝</div>
+        <div class="creature-name">蜜蜂</div>
+      </div>
+
+      <div
+        class="creature"
+        id="bird"
+      >
+        <div class="creature-icon">🐦</div>
+        <div class="creature-name">小鳥</div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 成就 -->
+
+  <div class="card">
+
+    <div class="section-title">
+      🏆 成就徽章
+    </div>
+
+    <div class="badges">
+
+      <div
+        class="badge"
+        id="badge1"
+      >
+        <div class="badge-icon">🌱</div>
+        <div class="badge-name">綠色新手</div>
+      </div>
+
+      <div
+        class="badge"
+        id="badge2"
+      >
+        <div class="badge-icon">🥗</div>
+        <div class="badge-name">蔬食行動家</div>
+      </div>
+
+      <div
+        class="badge"
+        id="badge3"
+      >
+        <div class="badge-icon">🌳</div>
+        <div class="badge-name">種樹達人</div>
+      </div>
+
+      <div
+        class="badge"
+        id="badge4"
+      >
+        <div class="badge-icon">🔥</div>
+        <div class="badge-name">連續7天</div>
+      </div>
+
+      <div
+        class="badge"
+        id="badge5"
+      >
+        <div class="badge-icon">⭐</div>
+        <div class="badge-name">碳積分100</div>
+      </div>
+
+      <div
+        class="badge"
+        id="badge6"
+      >
+        <div class="badge-icon">🐝</div>
+        <div class="badge-name">生態守護者</div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 完成 -->
+
+  <div
+    id="complete"
+    class="card complete"
+  >
+
+    🌳✨
+
+    <br>
+
+    <strong>
+      恭喜你！
+    </strong>
+
+    <br>
+
+    15 餐蔬食已完成
+
+    <br>
+
+    你種出了一
