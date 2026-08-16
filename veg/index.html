@@ -60,7 +60,8 @@ button {
   width:100%;
   max-width:390px;
   height:100%;
-  object-fit:contain;
+  object-fit:cover;
+  border-radius: 18px;
   margin:auto;
   display:block;
 }
@@ -83,6 +84,7 @@ button {
   font-size:23px;
   font-weight:900;
   color:#43814b;
+  margin-top: 12px;
 }
 .description {
   color:#7b8f7d;
@@ -341,7 +343,7 @@ button {
   <!-- 樹木 -->
   <div class="card tree-card">
     <div class="tree-container">
-      <img id="treeImage" class="tree" src="tree/tree_stage_01.png" alt="樹木" onerror="handleImageError()">
+      <img id="treeImage" class="tree" src="" alt="樹木" onerror="handleImageError()">
       <div id="treeFallback" class="tree-fallback">🌱</div>
     </div>
     <div id="stage" class="stage">🌱 種子</div>
@@ -487,6 +489,25 @@ const CARBON_PER_MEAL = 10;
 
 /* GAS Web 應用程式網址 */
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzf6WWGyuP1U1hUBNWhnv1NNJ0Py1PDLURc4egHNOjdTs3hJmROROAXZ0d47MG6uYXYGA/exec";
+
+/* 15 階段擬真圖片網址 */
+const realTreeImages = [
+  "https://images.unsplash.com/photo-1535242208474-9a2793260ca8?w=500", // 1. 種子/發芽
+  "https://images.unsplash.com/photo-1520412099551-62b6bafeb5bb?w=500", // 2. 小芽
+  "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=500", // 3. 嫩苗
+  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500", // 4. 幼苗
+  "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=500", // 5. 小樹盆栽
+  "https://images.unsplash.com/photo-1448375240586-882707db888b?w=500", // 6. 成長小樹
+  "https://images.unsplash.com/photo-1511497584788-8767611136f6?w=500", // 7. 森林幼樹
+  "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=500", // 8. 綠葉樹木
+  "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?w=500", // 9. 茂盛中樹
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=500", // 10. 成長大樹
+  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500", // 11. 壯碩大樹
+  "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=500", // 12. 綠蔭大樹
+  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500", // 13. 茁壯大樹
+  "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500", // 14. 參天大樹
+  "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=500"  // 15. 神木大樹
+];
 
 const stages = [
   ["種子", "你的綠色行動，從一餐開始", "🌱"],
@@ -671,8 +692,7 @@ function updateTreeVisual() {
   if (imageError) {
     document.getElementById("treeFallback").textContent = stages[stageIndex][2];
   } else {
-    const stageNumber = String(stageIndex + 1).padStart(2, "0");
-    document.getElementById("treeImage").src = `tree/tree_stage_${stageNumber}.png`;
+    document.getElementById("treeImage").src = realTreeImages[stageIndex];
   }
 }
 
