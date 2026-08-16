@@ -4,47 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>蔬食養樹｜15餐種出一棵樹</title>
-
 <style>
 * {
   box-sizing: border-box;
 }
-
 body {
   margin: 0;
   font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
   background: linear-gradient(180deg,#edf8e8,#ffffff);
   color: #35523b;
 }
-
 button {
   font-family: inherit;
 }
-
 .game {
   width: min(620px,94%);
   margin: auto;
   padding: 25px 0 50px;
 }
-
 /* 標題 */
 .logo {
   text-align:center;
   font-size:40px;
 }
-
 .title {
   text-align:center;
   font-size:28px;
   font-weight:900;
 }
-
 .subtitle {
   text-align:center;
   color:#78907a;
   margin-top:5px;
 }
-
 /* 卡片 */
 .card {
   background:rgba(255,255,255,.94);
@@ -53,53 +45,50 @@ button {
   margin-top:18px;
   box-shadow:0 8px 30px rgba(50,90,55,.10);
 }
-
 /* 樹 */
 .tree-card {
   text-align:center;
 }
-
+.tree-container {
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
 .tree {
   width:100%;
   max-width:390px;
-  height:350px;
+  height:100%;
   object-fit:contain;
   margin:auto;
   display:block;
 }
-
-.tree.grow {
+/* 圖片讀取失敗時的備援樣式 */
+.tree-fallback {
+  font-size: 150px;
+  line-height: 1;
+  user-select: none;
+  display: none;
+}
+.tree.grow, .tree-fallback.grow {
   animation:treeGrow .7s ease;
 }
-
 @keyframes treeGrow {
-  0% {
-    transform:scale(.78);
-    opacity:.3;
-  }
-
-  55% {
-    transform:scale(1.08);
-    opacity:1;
-  }
-
-  100% {
-    transform:scale(1);
-  }
+  0% { transform:scale(.78); opacity:.3; }
+  55% { transform:scale(1.08); opacity:1; }
+  100% { transform:scale(1); }
 }
-
 .stage {
   font-size:23px;
   font-weight:900;
   color:#43814b;
 }
-
 .description {
   color:#7b8f7d;
   font-size:14px;
   margin-top:5px;
 }
-
 /* 進度 */
 .progress-info {
   display:flex;
@@ -107,45 +96,38 @@ button {
   margin-bottom:8px;
   font-size:14px;
 }
-
 .progress-number {
   font-weight:900;
   color:#43814b;
 }
-
 .progress-bg {
   height:14px;
   background:#e1ecdf;
   border-radius:20px;
   overflow:hidden;
 }
-
 .progress {
   width:0;
   height:100%;
   background:linear-gradient(90deg,#9bce72,#4b9c58);
   transition:width .6s ease;
 }
-
 /* 今日 */
 .section-title {
   font-size:20px;
   font-weight:900;
   margin-bottom:13px;
 }
-
 .today-count {
   float:right;
   color:#4b9253;
   font-size:14px;
 }
-
 .meals {
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
 }
-
 .meal {
   border:2px solid #edf2eb;
   background:white;
@@ -155,36 +137,29 @@ button {
   color:#35523b;
   transition:.2s;
 }
-
 .meal:hover {
   transform:translateY(-3px);
   box-shadow:0 7px 18px rgba(50,90,55,.12);
 }
-
 .meal.done {
   background:#e4f5df;
   border-color:#8bc77c;
 }
-
 .meal-icon {
   font-size:30px;
 }
-
 .meal-name {
   font-weight:900;
 }
-
 .meal-status {
   font-size:12px;
   color:#89998a;
   margin-top:4px;
 }
-
 .meal.done .meal-status {
   color:#43814b;
   font-weight:800;
 }
-
 /* 訊息 */
 .message {
   min-height:25px;
@@ -194,7 +169,6 @@ button {
   color:#54825b;
   font-weight:700;
 }
-
 /* 連續天數 */
 .streak {
   display:flex;
@@ -202,17 +176,14 @@ button {
   justify-content:space-between;
   background:linear-gradient(135deg,#fff4cf,#fffbe9);
 }
-
 .streak-fire {
   font-size:38px;
 }
-
 .streak-number {
   font-size:28px;
   font-weight:900;
   color:#d98227;
 }
-
 /* 每日任務 */
 .task {
   background:#f5faf3;
@@ -223,37 +194,30 @@ button {
   align-items:center;
   gap:12px;
 }
-
 .task-icon {
   font-size:28px;
 }
-
 .task-info {
   flex:1;
 }
-
 .task-title {
   font-weight:900;
 }
-
 .task-progress {
   font-size:13px;
   color:#78907a;
   margin-top:3px;
 }
-
 .task-reward {
   font-weight:900;
   color:#4b9253;
 }
-
 /* 生態 */
 .ecology {
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:8px;
 }
-
 .creature {
   text-align:center;
   padding:12px 5px;
@@ -262,36 +226,30 @@ button {
   filter:grayscale(1);
   opacity:.45;
 }
-
 .creature.unlocked {
   background:#e7f6e2;
   filter:none;
   opacity:1;
   animation:pop .5s ease;
 }
-
 .creature-icon {
   font-size:28px;
 }
-
 .creature-name {
   font-size:12px;
   margin-top:3px;
 }
-
 @keyframes pop {
   0% { transform:scale(.6); }
   70% { transform:scale(1.12); }
   100% { transform:scale(1); }
 }
-
 /* 成就 */
 .badges {
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
 }
-
 .badge {
   text-align:center;
   padding:12px 5px;
@@ -300,42 +258,35 @@ button {
   opacity:.45;
   filter:grayscale(1);
 }
-
 .badge.unlocked {
   opacity:1;
   filter:none;
   background:#fff7d5;
 }
-
 .badge-icon {
   font-size:30px;
 }
-
 .badge-name {
   font-size:12px;
   font-weight:800;
   margin-top:4px;
 }
-
-/* 碳積分 */
+/* 碳積分與按鈕 */
 .carbon {
   text-align:center;
   background:#e9ece9;
   color:#89918a;
 }
-
 .carbon.unlocked {
   background:linear-gradient(135deg,#dff5d8,#c3e9b8);
   color:#376e3d;
 }
-
 .carbon-score {
   font-size:43px;
   font-weight:900;
   margin:5px;
 }
-
-.carbon-button {
+.carbon-button, .reset-button {
   border:0;
   border-radius:30px;
   padding:11px 25px;
@@ -343,13 +294,19 @@ button {
   color:white;
   font-weight:900;
   cursor:pointer;
+  transition: opacity .2s;
 }
-
 .carbon-button:disabled {
   background:#aaa;
   cursor:not-allowed;
 }
-
+.reset-button {
+  background: #35523b;
+  margin-top: 12px;
+}
+.reset-button:hover {
+  opacity: 0.9;
+}
 /* 完成 */
 .complete {
   display:none;
@@ -357,371 +314,462 @@ button {
   background:linear-gradient(135deg,#fff8cf,#fffdf0);
   line-height:1.8;
 }
-
 .complete.show {
   display:block;
   animation:complete .8s ease;
 }
-
 @keyframes complete {
-  0% {
-    transform:scale(.7);
-    opacity:0;
-  }
-
-  70% {
-    transform:scale(1.05);
-  }
-
-  100% {
-    transform:scale(1);
-    opacity:1;
-  }
+  0% { transform:scale(.7); opacity:0; }
+  70% { transform:scale(1.05); }
+  100% { transform:scale(1); opacity:1; }
 }
-
 /* 手機 */
 @media(max-width:480px) {
-
-  .tree {
-    height:310px;
-  }
-
-  .title {
-    font-size:25px;
-  }
-
-  .meals {
-    gap:6px;
-  }
-
-  .ecology {
-    grid-template-columns:repeat(4,1fr);
-  }
+  .tree-container { height:280px; }
+  .title { font-size:25px; }
+  .meals { gap:6px; }
+  .ecology { grid-template-columns:repeat(4,1fr); }
 }
 </style>
 </head>
-
 <body>
-
 <div class="game">
-
   <div class="logo">🌱</div>
-
-  <div class="title">
-    蔬食養樹
-  </div>
-
-  <div class="subtitle">
-    今天吃蔬食，讓樹木長大一點
-  </div>
-
+  <div class="title">蔬食養樹</div>
+  <div class="subtitle">今天吃蔬食，讓樹木長大一點</div>
 
   <!-- 樹木 -->
   <div class="card tree-card">
-
-    <img
-      id="treeImage"
-      class="tree"
-      src="tree/tree_stage_01.png"
-      alt="樹木"
-    >
-
-    <div id="stage" class="stage">
-      🌱 種子
+    <div class="tree-container">
+      <img id="treeImage" class="tree" src="tree/tree_stage_01.png" alt="樹木" onerror="handleImageError()">
+      <div id="treeFallback" class="tree-fallback">🌱</div>
     </div>
-
-    <div id="description" class="description">
-      你的綠色行動，從一餐開始
-    </div>
-
+    <div id="stage" class="stage">🌱 種子</div>
+    <div id="description" class="description">你的綠色行動，從一餐開始</div>
     <div style="margin-top:18px">
-
       <div class="progress-info">
-
-        <span>
-          🌳 成長進度
-        </span>
-
-        <span
-          id="progressNumber"
-          class="progress-number"
-        >
-          0 / 15 餐
-        </span>
-
+        <span>🌳 成長進度</span>
+        <span id="progressNumber" class="progress-number">0 / 15 餐</span>
       </div>
-
       <div class="progress-bg">
-
-        <div
-          id="progress"
-          class="progress"
-        ></div>
-
+        <div id="progress" class="progress"></div>
       </div>
-
     </div>
-
   </div>
 
-
   <!-- 今日蔬食 -->
-
   <div class="card">
-
     <div class="section-title">
-
       🥗 今日蔬食
-
-      <span
-        id="todayCount"
-        class="today-count"
-      >
-        0 / 3 餐
-      </span>
-
+      <span id="todayCount" class="today-count">0 / 3 餐</span>
     </div>
-
     <div class="meals">
-
-      <button
-        class="meal"
-        data-meal="breakfast"
-      >
+      <button class="meal" data-meal="breakfast">
         <div class="meal-icon">🥣</div>
         <div class="meal-name">早餐</div>
         <div class="meal-status">點擊記錄</div>
       </button>
-
-      <button
-        class="meal"
-        data-meal="lunch"
-      >
+      <button class="meal" data-meal="lunch">
         <div class="meal-icon">🍱</div>
         <div class="meal-name">午餐</div>
         <div class="meal-status">點擊記錄</div>
       </button>
-
-      <button
-        class="meal"
-        data-meal="dinner"
-      >
+      <button class="meal" data-meal="dinner">
         <div class="meal-icon">🍲</div>
         <div class="meal-name">晚餐</div>
         <div class="meal-status">點擊記錄</div>
       </button>
-
     </div>
-
     <div id="message" class="message"></div>
-
   </div>
-
 
   <!-- 連續天數 -->
-
   <div class="card streak">
-
     <div>
-
-      <div class="section-title">
-        🔥 綠色行動
-      </div>
-
-      <div>
-        連續吃蔬食
-      </div>
-
+      <div class="section-title">🔥 綠色行動</div>
+      <div>連續吃蔬食</div>
     </div>
-
     <div>
-
-      <div
-        id="streak"
-        class="streak-number"
-      >
-        0 天
-      </div>
-
-      <div class="streak-fire">
-        🔥
-      </div>
-
+      <div id="streak" class="streak-number">0 天</div>
+      <div class="streak-fire">🔥</div>
     </div>
-
   </div>
-
 
   <!-- 每日任務 -->
-
   <div class="card">
-
-    <div class="section-title">
-      🎯 今日任務
-    </div>
-
+    <div class="section-title">🎯 今日任務</div>
     <div class="task">
-
-      <div class="task-icon">
-        🥗
-      </div>
-
+      <div class="task-icon">🥗</div>
       <div class="task-info">
-
-        <div class="task-title">
-          完成今天的蔬食行動
-        </div>
-
-        <div
-          id="taskProgress"
-          class="task-progress"
-        >
-          0 / 2 餐
-        </div>
-
+        <div class="task-title">完成今天的蔬食行動</div>
+        <div id="taskProgress" class="task-progress">0 / 2 餐</div>
       </div>
-
-      <div
-        id="taskReward"
-        class="task-reward"
-      >
-        +10 ⭐
-      </div>
-
+      <div id="taskReward" class="task-reward">+10 ⭐</div>
     </div>
-
   </div>
 
-
   <!-- 生態系 -->
-
   <div class="card">
-
-    <div class="section-title">
-      🐝 我的生態系
-    </div>
-
+    <div class="section-title">🐝 我的生態系</div>
     <div class="ecology">
-
-      <div
-        class="creature"
-        id="flower"
-      >
+      <div class="creature" id="flower">
         <div class="creature-icon">🌼</div>
         <div class="creature-name">小花</div>
       </div>
-
-      <div
-        class="creature"
-        id="butterfly"
-      >
+      <div class="creature" id="butterfly">
         <div class="creature-icon">🦋</div>
         <div class="creature-name">蝴蝶</div>
       </div>
-
-      <div
-        class="creature"
-        id="bee"
-      >
+      <div class="creature" id="bee">
         <div class="creature-icon">🐝</div>
         <div class="creature-name">蜜蜂</div>
       </div>
-
-      <div
-        class="creature"
-        id="bird"
-      >
+      <div class="creature" id="bird">
         <div class="creature-icon">🐦</div>
         <div class="creature-name">小鳥</div>
       </div>
-
     </div>
-
   </div>
 
-
   <!-- 成就 -->
-
   <div class="card">
-
-    <div class="section-title">
-      🏆 成就徽章
-    </div>
-
+    <div class="section-title">🏆 成就徽章</div>
     <div class="badges">
-
-      <div
-        class="badge"
-        id="badge1"
-      >
+      <div class="badge" id="badge1">
         <div class="badge-icon">🌱</div>
         <div class="badge-name">綠色新手</div>
       </div>
-
-      <div
-        class="badge"
-        id="badge2"
-      >
+      <div class="badge" id="badge2">
         <div class="badge-icon">🥗</div>
         <div class="badge-name">蔬食行動家</div>
       </div>
-
-      <div
-        class="badge"
-        id="badge3"
-      >
+      <div class="badge" id="badge3">
         <div class="badge-icon">🌳</div>
         <div class="badge-name">種樹達人</div>
       </div>
-
-      <div
-        class="badge"
-        id="badge4"
-      >
+      <div class="badge" id="badge4">
         <div class="badge-icon">🔥</div>
         <div class="badge-name">連續7天</div>
       </div>
-
-      <div
-        class="badge"
-        id="badge5"
-      >
+      <div class="badge" id="badge5">
         <div class="badge-icon">⭐</div>
         <div class="badge-name">碳積分100</div>
       </div>
-
-      <div
-        class="badge"
-        id="badge6"
-      >
+      <div class="badge" id="badge6">
         <div class="badge-icon">🐝</div>
         <div class="badge-name">生態守護者</div>
       </div>
-
     </div>
-
   </div>
 
-
   <!-- 完成 -->
+  <div id="complete" class="card complete">
+    🌳✨<br>
+    <strong>恭喜你！</strong><br>
+    15 餐蔬食已完成，你種出了一棵大樹！<br>
+    🌎 綠色行動正式解鎖<br>
+    <button id="resetButton" class="reset-button">🌱 種下一棵新樹</button>
+  </div>
 
-  <div
-    id="complete"
-    class="card complete"
-  >
+  <!-- 碳積分 -->
+  <div id="carbon" class="card carbon">
+    <div class="section-title">⭐ 碳積分</div>
+    <div id="carbonScore" class="carbon-score">?</div>
+    <button id="carbonButton" class="carbon-button" disabled>完成15餐後解鎖</button>
+  </div>
+</div>
 
-    🌳✨
+<script>
+/* 基本設定 */
+const TOTAL_MEALS = 15;
+const DAILY_TASK_TARGET = 2;
+const CARBON_PER_MEAL = 10;
 
-    <br>
+/* GAS Web 應用程式網址 */
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzf6WWGyuP1U1hUBNWhnv1NNJ0Py1PDLURc4egHNOjdTs3hJmROROAXZ0d47MG6uYXYGA/exec";
 
-    <strong>
-      恭喜你！
-    </strong>
+const stages = [
+  ["種子", "你的綠色行動，從一餐開始", "🌱"],
+  ["發芽", "第一餐蔬食，種下希望", "🌱"],
+  ["小苗", "小小行動，也能帶來改變", "🌿"],
+  ["幼苗", "你的樹正在努力長大", "🌿"],
+  ["小樹", "綠色行動正在累積", "🪴"],
+  ["成長中的小樹", "每一餐都是地球的選擇", "🪴"],
+  ["茁壯小樹", "你的綠色力量越來越強", "🌳"],
+  ["年輕樹木", "一餐一餐，慢慢改變世界", "🌳"],
+  ["枝葉初成", "你的行動正在開花結果", "🌳"],
+  ["茂盛小樹", "綠意正在你的選擇中累積", "🌳"],
+  ["成長中的大樹", "再接近一點，大樹就完成了", "🌲"],
+  ["枝葉繁茂", "你的蔬食力量越來越強大", "🌲"],
+  ["茁壯大樹", "地球因你的選擇變得更好", "🌲"],
+  ["成熟大樹", "最後一點綠色力量", "🌳"],
+  ["大樹完成", "15餐蔬食，種出一棵大樹！", "🌳✨"]
+];
 
-    <br>
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
 
-    15 餐蔬食已完成
+const defaultData = {
+  totalMeals: 0,
+  lastDate: today(),
+  lastMealDate: "",
+  todayMeals: { breakfast: false, lunch: false, dinner: false },
+  streak: 0,
+  carbonScore: 0,
+  carbonUnlocked: false,
+  completedTask: false,
+  badges: []
+};
 
-    <br>
+let data = Object.assign({}, defaultData, JSON.parse(localStorage.getItem("vegetarianTreeGame")));
+data.todayMeals = Object.assign({}, defaultData.todayMeals, data.todayMeals || {});
 
-    你種出了一
+function save() {
+  localStorage.setItem("vegetarianTreeGame", JSON.stringify(data));
+}
+
+// 發送資料至 Google 試算表
+function syncToGoogleSheet(mealName, action) {
+  if (!GAS_WEB_APP_URL) return;
+
+  const payload = {
+    date: today(),
+    mealName: mealName,
+    action: action,
+    totalMeals: data.totalMeals,
+    streak: data.streak,
+    carbonScore: data.carbonScore
+  };
+
+  fetch(GAS_WEB_APP_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(err => console.error("Google Sheet 同步失敗:", err));
+}
+
+function checkNewDay() {
+  const now = today();
+  if (data.lastDate !== now) {
+    if (data.lastMealDate) {
+      const last = new Date(data.lastMealDate);
+      const current = new Date(now);
+      const diffDays = Math.round((current - last) / (1000 * 3600 * 24));
+      if (diffDays > 1) {
+        data.streak = 0;
+      }
+    }
+    data.lastDate = now;
+    data.todayMeals = { breakfast: false, lunch: false, dinner: false };
+    data.completedTask = false;
+    save();
+  }
+}
+
+function todayMealsCount() {
+  return Object.values(data.todayMeals).filter(Boolean).length;
+}
+
+function eatMeal(meal) {
+  checkNewDay();
+  const isDone = data.todayMeals[meal];
+  const mealNames = { breakfast: "早餐", lunch: "午餐", dinner: "晚餐" };
+  const currentMealName = mealNames[meal] || meal;
+
+  if (!isDone) {
+    if (data.totalMeals >= TOTAL_MEALS) {
+      message("🌳 大樹已經完成囉！請點擊下方按鈕開始種下一棵樹！");
+      return;
+    }
+
+    data.todayMeals[meal] = true;
+    data.totalMeals++;
+    data.carbonScore += CARBON_PER_MEAL;
+
+    if (!data.lastMealDate) {
+      data.streak = 1;
+      data.lastMealDate = today();
+    } else if (data.lastMealDate !== today()) {
+      const last = new Date(data.lastMealDate);
+      const current = new Date(today());
+      const diffDays = Math.round((current - last) / (1000 * 3600 * 24));
+
+      if (diffDays === 1) {
+        data.streak++;
+      } else if (diffDays > 1) {
+        data.streak = 1;
+      }
+      data.lastMealDate = today();
+    }
+
+    if (todayMealsCount() >= DAILY_TASK_TARGET && !data.completedTask) {
+      data.carbonScore += 10;
+      data.completedTask = true;
+      message("🎯 每日任務完成！額外獲得 +10 碳積分");
+    } else {
+      message("🌱 太棒了！樹木成長一階");
+    }
+
+    if (data.totalMeals >= TOTAL_MEALS) {
+      data.totalMeals = TOTAL_MEALS;
+      data.carbonUnlocked = true;
+    }
+    growTree();
+    syncToGoogleSheet(currentMealName, "記錄餐點");
+
+  } else {
+    data.todayMeals[meal] = false;
+    data.totalMeals = Math.max(0, data.totalMeals - 1);
+    data.carbonScore = Math.max(0, data.carbonScore - CARBON_PER_MEAL);
+
+    if (todayMealsCount() < DAILY_TASK_TARGET && data.completedTask) {
+      data.completedTask = false;
+      data.carbonScore = Math.max(0, data.carbonScore - 10);
+    }
+    message("已取消此餐點紀錄");
+    syncToGoogleSheet(currentMealName, "取消紀錄");
+  }
+
+  updateBadges();
+  save();
+  updateUI();
+
+  if (data.totalMeals === TOTAL_MEALS) {
+    setTimeout(() => {
+      document.getElementById("complete").classList.add("show");
+    }, 700);
+  } else {
+    document.getElementById("complete").classList.remove("show");
+  }
+}
+
+function resetTree() {
+  data.totalMeals = 0;
+  data.todayMeals = { breakfast: false, lunch: false, dinner: false };
+  data.completedTask = false;
+  document.getElementById("complete").classList.remove("show");
+  message("🌱 已開始種植下一棵樹！感謝你持續維護地球環境！");
+  syncToGoogleSheet("全部", "開啟新樹之旅");
+  save();
+  updateUI();
+  growTree();
+}
+
+let imageError = false;
+function handleImageError() {
+  imageError = true;
+  document.getElementById("treeImage").style.display = "none";
+  document.getElementById("treeFallback").style.display = "block";
+  updateTreeVisual();
+}
+
+function updateTreeVisual() {
+  const stageIndex = Math.min(data.totalMeals, 14);
+  if (imageError) {
+    document.getElementById("treeFallback").textContent = stages[stageIndex][2];
+  } else {
+    const stageNumber = String(stageIndex + 1).padStart(2, "0");
+    document.getElementById("treeImage").src = `tree/tree_stage_${stageNumber}.png`;
+  }
+}
+
+function updateBadges() {
+  const earned = [];
+  if (data.totalMeals >= 1) earned.push("badge1");
+  if (data.totalMeals >= 5) earned.push("badge2");
+  if (data.totalMeals >= 15) earned.push("badge3");
+  if (data.streak >= 7) earned.push("badge4");
+  if (data.carbonScore >= 100) earned.push("badge5");
+  if (data.totalMeals >= 10) earned.push("badge6");
+  data.badges = earned;
+}
+
+function updateUI() {
+  checkNewDay();
+
+  const stageIndex = Math.min(data.totalMeals, 14);
+  updateTreeVisual();
+
+  document.getElementById("stage").textContent = "🌳 " + stages[stageIndex][0];
+  document.getElementById("description").textContent = stages[stageIndex][1];
+
+  document.getElementById("progressNumber").textContent = `${data.totalMeals} / ${TOTAL_MEALS} 餐`;
+  document.getElementById("progress").style.width = `${(data.totalMeals / TOTAL_MEALS) * 100}%`;
+
+  const count = todayMealsCount();
+  document.getElementById("todayCount").textContent = `${count} / 3 餐`;
+
+  document.querySelectorAll(".meal").forEach(button => {
+    const meal = button.dataset.meal;
+    const status = button.querySelector(".meal-status");
+    if (data.todayMeals[meal]) {
+      button.classList.add("done");
+      status.textContent = "✓ 已完成 (點擊取消)";
+    } else {
+      button.classList.remove("done");
+      status.textContent = "點擊記錄";
+    }
+  });
+
+  document.getElementById("streak").textContent = `${data.streak} 天`;
+  document.getElementById("taskProgress").textContent = `${Math.min(count, DAILY_TASK_TARGET)} / ${DAILY_TASK_TARGET} 餐`;
+  document.getElementById("taskReward").textContent = data.completedTask ? "✓ 已完成" : "+10 ⭐";
+
+  unlockCreature("flower", data.totalMeals >= 3);
+  unlockCreature("butterfly", data.totalMeals >= 6);
+  unlockCreature("bee", data.totalMeals >= 9);
+  unlockCreature("bird", data.totalMeals >= 12);
+
+  document.querySelectorAll(".badge").forEach(badge => badge.classList.remove("unlocked"));
+  data.badges.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("unlocked");
+  });
+
+  if (data.carbonUnlocked) {
+    document.getElementById("carbon").classList.add("unlocked");
+    document.getElementById("carbonScore").textContent = data.carbonScore;
+    document.getElementById("carbonButton").disabled = false;
+    document.getElementById("carbonButton").textContent = "查看碳積分";
+  }
+}
+
+function unlockCreature(id, unlocked) {
+  const el = document.getElementById(id);
+  if (unlocked) el.classList.add("unlocked");
+  else el.classList.remove("unlocked");
+}
+
+function growTree() {
+  const target = imageError ? document.getElementById("treeFallback") : document.getElementById("treeImage");
+  target.classList.remove("grow");
+  void target.offsetWidth;
+  target.classList.add("grow");
+}
+
+function message(text) {
+  document.getElementById("message").textContent = text;
+}
+
+document.querySelectorAll(".meal").forEach(button => {
+  button.addEventListener("click", () => eatMeal(button.dataset.meal));
+});
+
+document.getElementById("carbonButton").addEventListener("click", () => {
+  if (data.carbonUnlocked) {
+    message(`⭐ 目前總碳積分：${data.carbonScore} 分`);
+  }
+});
+
+document.getElementById("resetButton").addEventListener("click", resetTree);
+
+checkNewDay();
+updateBadges();
+save();
+updateUI();
+</script>
+</body>
+</html>
